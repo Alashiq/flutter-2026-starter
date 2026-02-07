@@ -27,7 +27,6 @@ class ApiClient {
     return headers;
   }
 
-  // Construct full URL
   Uri _getUri(String path) {
     // Remove leading slash if present to avoid double slashes with baseUrl which might have trailing slash
     final cleanPath = path.startsWith('/') ? path.substring(1) : path;
