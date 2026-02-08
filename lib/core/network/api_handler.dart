@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:starter/core/network/api_state.dart';
 import 'package:starter/core/network/api_state_paginated.dart';
+import 'package:starter/core/widgets/dialog/alert_message.dart';
 import 'package:starter/core/network/models/pagination_meta.dart';
 
 class ApiHandler {
@@ -72,6 +74,8 @@ class ApiHandler {
     required Future<http.Response> Function() apiCall,
     required T Function(Map<String, dynamic>) fromJson,
     required bool isLoadMore,
+    VoidCallback? onLoadMoreFailed, // callback للتراجع عن العمليات عند الفشل
+    // تم إزالة callback واستبداله بـ showAlertMessage مباشرة
   }) async {
     print('🟢 handlePaginatedApiCall - isLoadMore: $isLoadMore');
 
@@ -97,34 +101,100 @@ class ApiHandler {
     try {
       final response = await apiCall();
       print('🟢 API Response status: ${response.statusCode}');
-      _processPaginatedResponse<T>(
+
+      final success = _processPaginatedResponse<T>(
         response: response,
         state: state,
         currentData: currentData,
         fromJson: fromJson,
+        isLoadMore: isLoadMore,
       );
+
+      // إذا فشل تحميل المزيد
+      if (!success &&
+          isLoadMore &&
+          currentData != null &&
+          currentMeta != null) {
+        print('🔴 Load more failed, reverting to previous state');
+        state.value = ApiPaginatedSuccess(currentData, currentMeta);
+
+        // استدعاء callback التراجع
+        if (onLoadMoreFailed != null) {
+          onLoadMoreFailed();
+        }
+
+        // عرض رسالة خطأ باستخدام showAlertMessage
+        showAlertMessage(
+          _getErrorMessage(response.statusCode),
+          type: AlertType.error,
+        );
+      }
     } on SocketException {
       print('🔴 SocketException - No Internet');
-      state.value = ApiPaginatedNoInternet(
-        currentData: currentData,
-        meta: currentMeta,
-      );
+
+      if (isLoadMore && currentData != null && currentMeta != null) {
+        // عند تحميل المزيد: الاحتفاظ بالبيانات وعرض رسالة
+        state.value = ApiPaginatedSuccess(currentData, currentMeta);
+
+        // استدعاء callback التراجع
+        if (onLoadMoreFailed != null) {
+          onLoadMoreFailed();
+        }
+
+        showAlertMessage('لا يوجد اتصال بالإنترنت', type: AlertType.noInternet);
+      } else {
+        // عند التحميل الأول: عرض شاشة خطأ
+        state.value = ApiPaginatedNoInternet(
+          currentData: currentData,
+          meta: currentMeta,
+        );
+      }
     } catch (e) {
       print('🔴 Error: $e');
-      state.value = ApiPaginatedError(
-        0,
-        'حدث خطأ غير متوقع: $e',
-        currentData: currentData,
-        meta: currentMeta,
-      );
+
+      if (isLoadMore && currentData != null && currentMeta != null) {
+        // عند تحميل المزيد: الاحتفاظ بالبيانات وعرض رسالة
+        state.value = ApiPaginatedSuccess(currentData, currentMeta);
+
+        // استدعاء callback التراجع
+        if (onLoadMoreFailed != null) {
+          onLoadMoreFailed();
+        }
+
+        showAlertMessage('حدث خطأ غير متوقع', type: AlertType.error);
+      } else {
+        // عند التحميل الأول: عرض شاشة خطأ
+        state.value = ApiPaginatedError(
+          0,
+          'حدث خطأ غير متوقع: $e',
+          currentData: currentData,
+          meta: currentMeta,
+        );
+      }
     }
   }
 
-  void _processPaginatedResponse<T>({
+  String _getErrorMessage(int statusCode) {
+    switch (statusCode) {
+      case 404:
+        return 'البيانات غير متوفرة';
+      case 500:
+        return 'حدث خطأ في الخادم';
+      case 401:
+        return 'انتهت الجلسة، يرجى تسجيل الدخول';
+      case 403:
+        return 'لا تمتلك الصلاحية لهذه العملية';
+      default:
+        return 'فشل تحميل المزيد من البيانات';
+    }
+  }
+
+  bool _processPaginatedResponse<T>({
     required http.Response response,
     required Rx<ApiStatePaginated<T>> state,
     required List<T>? currentData,
     required T Function(Map<String, dynamic>) fromJson,
+    required bool isLoadMore,
   }) {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
@@ -159,49 +229,71 @@ class ApiHandler {
           if (finalData.isEmpty) {
             print('🟡 Setting ApiPaginatedEmpty');
             state.value = const ApiPaginatedEmpty();
+            return false;
           } else {
             print('🟡 Setting ApiPaginatedSuccess');
             state.value = ApiPaginatedSuccess(finalData, meta);
+            return true;
           }
         } else {
           print('🔴 No data array in response');
           state.value = const ApiPaginatedEmpty();
+          return false;
         }
       } else {
         print('🔴 Response success=false or no data');
-        state.value = ApiPaginatedError(
-          200,
-          body['message'] ?? 'فشلت العملية',
-          currentData: currentData,
-        );
+        // عند تحميل المزيد، لا نغير الحالة هنا
+        if (!isLoadMore) {
+          state.value = ApiPaginatedError(
+            200,
+            body['message'] ?? 'فشلت العملية',
+            currentData: currentData,
+          );
+        }
+        return false;
       }
     } else if (response.statusCode == 204) {
-      state.value = const ApiPaginatedEmpty();
+      if (!isLoadMore) {
+        state.value = const ApiPaginatedEmpty();
+      }
+      return false;
     } else if (response.statusCode == 401) {
-      state.value = const ApiPaginatedUnauthorized();
+      if (!isLoadMore) {
+        state.value = const ApiPaginatedUnauthorized();
+      }
+      return false;
     } else if (response.statusCode == 403) {
-      state.value = const ApiPaginatedNoPermission();
+      if (!isLoadMore) {
+        state.value = const ApiPaginatedNoPermission();
+      }
+      return false;
     } else if (response.statusCode == 404) {
-      state.value = ApiPaginatedError(
-        404,
-        'الرابط غير موجود أو البيانات غير متوفرة',
-        currentData: currentData,
-      );
-    } else {
-      try {
-        final body = jsonDecode(response.body);
+      if (!isLoadMore) {
         state.value = ApiPaginatedError(
-          response.statusCode,
-          body['message'] ?? 'خطأ غير معروف',
-          currentData: currentData,
-        );
-      } catch (_) {
-        state.value = ApiPaginatedError(
-          response.statusCode,
-          'خطأ غير معروف',
+          404,
+          'الرابط غير موجود أو البيانات غير متوفرة',
           currentData: currentData,
         );
       }
+      return false;
+    } else {
+      if (!isLoadMore) {
+        try {
+          final body = jsonDecode(response.body);
+          state.value = ApiPaginatedError(
+            response.statusCode,
+            body['message'] ?? 'خطأ غير معروف',
+            currentData: currentData,
+          );
+        } catch (e) {
+          state.value = ApiPaginatedError(
+            response.statusCode,
+            'خطأ غير معروف',
+            currentData: currentData,
+          );
+        }
+      }
+      return false;
     }
   }
 

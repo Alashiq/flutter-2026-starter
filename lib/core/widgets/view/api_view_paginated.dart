@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:starter/core/network/api_state_paginated.dart';
+import 'package:starter/core/theme/app_colors.dart';
 import 'package:starter/core/widgets/loading/loading_inside.dart';
 import 'package:starter/core/widgets/screen_status/base_screen_status.dart';
 import 'package:starter/core/widgets/screen_status/empty_screen.dart';
@@ -7,10 +8,9 @@ import 'package:starter/core/widgets/screen_status/error_screen.dart';
 import 'package:starter/core/widgets/screen_status/no_internet_screen.dart';
 import 'package:starter/core/widgets/screen_status/no_permission_screen.dart';
 
-class ApiViewPaginated<T> extends StatefulWidget {
+class ApiViewPaginated<T> extends StatelessWidget {
   final ApiStatePaginated<T> state;
-  final Widget Function(List<T> items, ScrollController scrollController)
-  builder;
+  final Widget Function(List<T> items) builder;
   final VoidCallback onReload;
   final VoidCallback onLoadMore;
   final VoidCallback? onRetry;
@@ -25,73 +25,17 @@ class ApiViewPaginated<T> extends StatefulWidget {
   });
 
   @override
-  State<ApiViewPaginated<T>> createState() => _ApiViewPaginatedState<T>();
-}
-
-class _ApiViewPaginatedState<T> extends State<ApiViewPaginated<T>> {
-  late ScrollController _scrollController;
-  bool _isLoadingMore = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_isLoadingMore) return;
-
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
-    final delta = 200.0; // تحميل المزيد قبل الوصول للنهاية بـ 200 بكسل
-
-    if (currentScroll >= (maxScroll - delta)) {
-      final state = widget.state;
-      print('🟣 Scroll reached threshold - State type: ${state.runtimeType}');
-
-      if (state is ApiPaginatedSuccess<T>) {
-        print('🟣 Is ApiPaginatedSuccess');
-        print('🟣 Has next page: ${state.meta.hasNextPage}');
-        print('🟣 Is last page: ${state.meta.isLastPage}');
-        print('🟣 Current page: ${state.meta.currentPage}');
-        print('🟣 Last page: ${state.meta.lastPage}');
-
-        if (!state.meta.isLastPage) {
-          print('🟣 Calling onLoadMore()');
-          _isLoadingMore = true;
-          widget.onLoadMore();
-          Future.delayed(const Duration(milliseconds: 500), () {
-            _isLoadingMore = false;
-          });
-        } else {
-          print('🟣 Already on last page, not loading more');
-        }
-      } else {
-        print('🟣 State is not ApiPaginatedSuccess');
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return switch (widget.state) {
+    return switch (state) {
       ApiPaginatedInit() ||
       ApiPaginatedLoading() => const LoadingInsideWidget(),
       ApiPaginatedLoadingMore(currentData: final data, meta: final meta) =>
         _buildSuccessWithLoadingIndicator(data, meta),
       ApiPaginatedSuccess(data: final data, meta: final meta) =>
         data.isEmpty
-            ? EmptyScreen(onRetry: widget.onRetry)
+            ? EmptyScreen(onRetry: onRetry)
             : _buildSuccess(data, meta),
-      ApiPaginatedEmpty() => EmptyScreen(onRetry: widget.onRetry),
+      ApiPaginatedEmpty() => EmptyScreen(onRetry: onRetry),
       ApiPaginatedError(
         message: final msg,
         currentData: final data,
@@ -99,32 +43,54 @@ class _ApiViewPaginatedState<T> extends State<ApiViewPaginated<T>> {
       ) =>
         data != null && data.isNotEmpty
             ? _buildSuccessWithError(data, meta, msg)
-            : ErrorScreen(message: msg, onRetry: widget.onReload),
+            : ErrorScreen(message: msg, onRetry: onReload),
       ApiPaginatedNoInternet(currentData: final data, meta: final meta) =>
         data != null && data.isNotEmpty
             ? _buildSuccessWithError(data, meta, 'لا يوجد اتصال بالإنترنت')
-            : NoInternetScreen(onRetry: widget.onReload),
+            : NoInternetScreen(onRetry: onReload),
       ApiPaginatedUnauthorized() => BaseScreenStatus(
         title: 'غير مصرح',
         message: 'يجب تسجيل الدخول للوصول إلى هذا المحتوى',
         icon: Icons.lock_outline_rounded,
-        onRetry: widget.onReload,
+        onRetry: onReload,
         retryText: 'تسجيل الدخول',
         primaryColor: const Color(0xFFDC2626),
       ),
-      ApiPaginatedNoPermission() => NoPermissionScreen(
-        onRetry: widget.onReload,
-      ),
+      ApiPaginatedNoPermission() => NoPermissionScreen(onRetry: onReload),
     };
   }
 
   Widget _buildSuccess(List<T> data, meta) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        widget.onReload();
-        await Future.delayed(const Duration(seconds: 1));
-      },
-      child: widget.builder(data, _scrollController),
+    return Column(
+      children: [
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              onReload();
+              await Future.delayed(const Duration(seconds: 1));
+            },
+            child: builder(data),
+          ),
+        ),
+        // زر تحميل المزيد
+        if (!meta.isLastPage)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton.icon(
+              onPressed: onLoadMore,
+              icon: const Icon(Icons.arrow_downward),
+              label: Text(
+                'تحميل المزيد (${meta.currentPage}/${meta.lastPage})',
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -134,10 +100,10 @@ class _ApiViewPaginatedState<T> extends State<ApiViewPaginated<T>> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              widget.onReload();
+              onReload();
               await Future.delayed(const Duration(seconds: 1));
             },
-            child: widget.builder(data, _scrollController),
+            child: builder(data),
           ),
         ),
         Container(
@@ -165,10 +131,10 @@ class _ApiViewPaginatedState<T> extends State<ApiViewPaginated<T>> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              widget.onReload();
+              onReload();
               await Future.delayed(const Duration(seconds: 1));
             },
-            child: widget.builder(data, _scrollController),
+            child: builder(data),
           ),
         ),
         Container(
@@ -185,7 +151,7 @@ class _ApiViewPaginatedState<T> extends State<ApiViewPaginated<T>> {
                 ),
               ),
               TextButton(
-                onPressed: widget.onLoadMore,
+                onPressed: onLoadMore,
                 child: const Text('إعادة المحاولة'),
               ),
             ],

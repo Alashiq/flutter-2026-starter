@@ -181,23 +181,19 @@ class HomeScreen extends StatelessWidget {
                   },
                   child: const Text('City Screen (AutoLoad)'),
                 ),
+
                 ElevatedButton(
                   onPressed: () {
                     Get.toNamed('/city_list');
                   },
                   child: const Text('City List Screen (AutoLoad)'),
                 ),
+
                 ElevatedButton(
                   onPressed: () {
                     Get.toNamed('/city_paginated');
                   },
                   child: const Text('City Paginated Screen'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed('/city_paginated_button');
-                  },
-                  child: const Text('City Paginated (Button)'),
                 ),
                 // Instructions
                 Container(

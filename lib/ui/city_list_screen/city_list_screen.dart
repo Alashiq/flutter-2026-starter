@@ -2,69 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:starter/core/theme/app_colors.dart';
 import 'package:starter/core/theme/app_text_styles.dart';
+import 'package:starter/core/widgets/auto_load/auto_load.dart';
 import 'package:starter/core/widgets/view/api_view_multi.dart';
 import 'package:starter/features/city/city_controller.dart';
 import 'package:starter/features/city/models/city_list_model.dart';
 
-class CityListScreen extends GetView<CityController> {
+class CityListScreen extends StatelessWidget {
   const CityListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Initial load
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.loadListCity();
-    });
+    final controller = Get.put(CityController());
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('قائمة المدن'), centerTitle: true),
-      body: Column(
-        children: [
-          // Search Field
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              onChanged: (value) => controller.loadListCity(search: value),
-              decoration: InputDecoration(
-                hintText: 'ابحث عن مدينة...',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: AppColors.surface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+    return AutoLoad(
+      onLoad: () => controller.loadListCity(),
+      builder: (context) => Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: const Text('قائمة المدن'), centerTitle: true),
+        body: Column(
+          children: [
+            // Search Field
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                onChanged: (value) => controller.loadListCity(search: value),
+                decoration: InputDecoration(
+                  hintText: 'ابحث عن مدينة...',
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // List View
-          Expanded(
-            child: Obx(
-              () => ApiViewMulti<CityListModel>(
-                state: controller.cityListState.value,
-                onReload: () => controller.loadListCity(),
-                onRetry: () => controller.loadListCity(),
-                builder: (cities) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    itemCount: cities.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final city = cities[index];
-                      return _CityCard(city: city);
-                    },
-                  );
-                },
+            // List View
+            Expanded(
+              child: Obx(
+                () => ApiViewMulti<CityListModel>(
+                  state: controller.cityListState.value,
+                  onReload: () => controller.loadListCity(),
+                  onRetry: () => controller.loadListCity(),
+                  builder: (cities) {
+                    return ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      itemCount: cities.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final city = cities[index];
+                        return _CityCard(city: city);
+                      },
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

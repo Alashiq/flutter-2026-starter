@@ -14,6 +14,8 @@ mixin LoadPaginatedCityMixin on GetxController {
     bool isLoadMore = false,
     String? search,
   }) async {
+    final previousPage = currentPage;
+
     if (isLoadMore) {
       currentPage++;
     } else {
@@ -30,6 +32,9 @@ mixin LoadPaginatedCityMixin on GetxController {
       apiCall: () => ApiClient().get(query),
       fromJson: (json) => CityPaginatedModel.fromJson(json),
       isLoadMore: isLoadMore,
+      onLoadMoreFailed: () {
+        currentPage = previousPage;
+      },
     );
   }
 
