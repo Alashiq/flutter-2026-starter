@@ -18,6 +18,7 @@ class CityController extends GetxController
   @override
   void onClose() {
     searchPaginatedController.dispose();
+    disposeAddCityControllers();
     super.onClose();
   }
 }
