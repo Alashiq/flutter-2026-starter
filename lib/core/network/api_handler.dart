@@ -339,12 +339,12 @@ class ApiHandler {
   Future<void> handleOperationApiCall<T>({
     required Rx<ApiState<T>> state,
     required Future<http.Response> Function() apiCall,
-    required T Function(Map<String, dynamic>) fromJson,
+    T Function(dynamic)? fromJson, // Made optional and dynamic input
     String? successMessage,
   }) async {
     showLoading(); // Show global loading
     state.value = const ApiLoading();
-    await Future.delayed(const Duration(seconds: 2)); // Add 2 seconds delay
+    await Future.delayed(const Duration(seconds: 4)); // Add 2 seconds delay
 
     try {
       final response = await apiCall();
@@ -354,11 +354,22 @@ class ApiHandler {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (body['success'] == true) {
-          if (body['data'] != null) {
-            state.value = ApiSuccess(fromJson(body['data']));
+          T data;
+          if (fromJson != null) {
+            data = fromJson(body['data'] ?? {});
           } else {
-            state.value = ApiSuccess(fromJson(body['data'] ?? {}));
+            // Default handling if fromJson is missing
+            if (T == bool) {
+              // Unsafe cast, but standard for success check
+              data = true as T;
+            } else if (body['data'] != null && body['data'] is T) {
+              data = body['data'] as T;
+            } else {
+              // Fallback: try to cast or assume dynamic
+              data = (body['data'] ?? {}) as T;
+            }
           }
+          state.value = ApiSuccess(data);
 
           if (successMessage != null || body['message'] != null) {
             showAlertMessage(
@@ -375,18 +386,18 @@ class ApiHandler {
         state.value = const ApiUnauthorized();
         showAlertMessage(
           'انتهت الجلسة، يرجى تسجيل الدخول',
-          type: AlertType.error,
+          type: AlertType.unauthorized,
         );
       } else if (response.statusCode == 403) {
         state.value = const ApiNoPermission();
         showAlertMessage(
           'لا تمتلك الصلاحية لهذه العملية',
-          type: AlertType.error,
+          type: AlertType.noPermission,
         );
       } else if (response.statusCode == 404) {
         const msg = 'الرابط غير موجود';
         state.value = const ApiError(404, msg);
-        showAlertMessage(msg, type: AlertType.error);
+        showAlertMessage(msg, type: AlertType.noInternet);
       } else {
         final msg = body['message'] ?? 'خطأ غير معروف';
         state.value = ApiError(response.statusCode, msg);
