@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:starter/core/network/api_state.dart';
 import 'package:starter/core/theme/app_colors.dart';
 import 'package:starter/core/utils/app_validators.dart';
-import 'package:starter/core/widgets/dialog/alert_message.dart';
 import 'package:starter/features/city/city_controller.dart';
 import 'package:starter/features/city/models/add_city_request.dart';
-import 'package:starter/features/city/models/city_model.dart';
 
 class AddCityScreen extends StatefulWidget {
   const AddCityScreen({super.key});
@@ -45,10 +43,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
       final state = controller.addCityState.value;
       if (state is ApiSuccess) {
         Get.back(); // Go back to list
-        showAlertMessage('تم إضافة المدينة بنجاح', type: AlertType.success);
         controller.loadPaginatedCity(); // Refresh list
-      } else if (state is ApiError<CityOneModel>) {
-        showAlertMessage(state.message, type: AlertType.error);
       }
     }
   }
@@ -103,31 +98,24 @@ class _AddCityScreenState extends State<AddCityScreen> {
               const SizedBox(height: 32),
 
               // Submit Button
-              Obx(() {
-                final state = controller.addCityState.value;
-                return SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: state is ApiLoading ? null : _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+              // Submit Button
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: state is ApiLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'إضافة المدينة',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
-                );
-              }),
+                  child: const Text(
+                    'إضافة المدينة',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

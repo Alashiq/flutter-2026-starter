@@ -9,10 +9,11 @@ mixin AddCityMixin on GetxController {
   final addCityState = Rx<ApiState<CityOneModel>>(const ApiInit());
 
   Future<void> addCity(AddCityRequest request) async {
-    await ApiHandler().handleItemApiCall<CityOneModel>(
+    await ApiHandler().handleOperationApiCall<CityOneModel>(
       state: addCityState,
       apiCall: () => ApiClient().post('citypg', body: request.toJson()),
       fromJson: (json) => CityOneModel.fromJson(json),
+      successMessage: 'تم إضافة المدينة بنجاح',
     );
   }
 

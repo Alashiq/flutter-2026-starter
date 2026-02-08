@@ -7,6 +7,7 @@ import 'package:starter/core/network/api_state.dart';
 import 'package:starter/core/network/api_state_paginated.dart';
 import 'package:starter/core/widgets/dialog/alert_message.dart';
 import 'package:starter/core/network/models/pagination_meta.dart';
+import 'package:starter/core/widgets/loading/loading.dart';
 
 class ApiHandler {
   Future<void> handleItemApiCall<T>({
@@ -330,6 +331,76 @@ class ApiHandler {
       } catch (_) {
         state.value = ApiError(response.statusCode, 'خطأ غير معروف');
       }
+    }
+  }
+
+  // Make response not required
+
+  Future<void> handleOperationApiCall<T>({
+    required Rx<ApiState<T>> state,
+    required Future<http.Response> Function() apiCall,
+    required T Function(Map<String, dynamic>) fromJson,
+    String? successMessage,
+  }) async {
+    showLoading(); // Show global loading
+    state.value = const ApiLoading();
+    await Future.delayed(const Duration(seconds: 2)); // Add 2 seconds delay
+
+    try {
+      final response = await apiCall();
+      final body = jsonDecode(response.body);
+
+      stopLoading(); // Stop loading before showing alerts
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (body['success'] == true) {
+          if (body['data'] != null) {
+            state.value = ApiSuccess(fromJson(body['data']));
+          } else {
+            state.value = ApiSuccess(fromJson(body['data'] ?? {}));
+          }
+
+          if (successMessage != null || body['message'] != null) {
+            showAlertMessage(
+              successMessage ?? body['message'],
+              type: AlertType.success,
+            );
+          }
+        } else {
+          final msg = body['message'] ?? 'فشلت العميله';
+          state.value = ApiError(200, msg);
+          showAlertMessage(msg, type: AlertType.error);
+        }
+      } else if (response.statusCode == 401) {
+        state.value = const ApiUnauthorized();
+        showAlertMessage(
+          'انتهت الجلسة، يرجى تسجيل الدخول',
+          type: AlertType.error,
+        );
+      } else if (response.statusCode == 403) {
+        state.value = const ApiNoPermission();
+        showAlertMessage(
+          'لا تمتلك الصلاحية لهذه العملية',
+          type: AlertType.error,
+        );
+      } else if (response.statusCode == 404) {
+        const msg = 'الرابط غير موجود';
+        state.value = const ApiError(404, msg);
+        showAlertMessage(msg, type: AlertType.error);
+      } else {
+        final msg = body['message'] ?? 'خطأ غير معروف';
+        state.value = ApiError(response.statusCode, msg);
+        showAlertMessage(msg, type: AlertType.error);
+      }
+    } on SocketException {
+      stopLoading();
+      state.value = const ApiNoInternet();
+      showAlertMessage('لا يوجد اتصال بالإنترنت', type: AlertType.noInternet);
+    } catch (e) {
+      stopLoading();
+      final msg = 'حدث خطأ غير متوقع: $e';
+      state.value = ApiError(0, msg);
+      showAlertMessage('حدث خطأ غير متوقع', type: AlertType.error);
     }
   }
 }
