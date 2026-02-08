@@ -4,8 +4,14 @@ import 'package:starter/features/city/actions/load_one_city.dart';
 import 'package:starter/features/city/actions/load_list_city.dart';
 import 'package:starter/features/city/actions/load_paginated_city.dart';
 
+import 'package:starter/features/city/actions/add_city_mixin.dart';
+
 class CityController extends GetxController
-    with LoadOneCityMixin, LoadListCityMixin, LoadPaginatedCityMixin {
+    with
+        LoadOneCityMixin,
+        LoadListCityMixin,
+        LoadPaginatedCityMixin,
+        AddCityMixin {
   // TextEditingController للبحث في صفحة pagination
   final searchPaginatedController = TextEditingController();
 

@@ -72,6 +72,11 @@ class CityPaginatedScreen extends StatelessWidget {
             ),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Get.toNamed('/add_city'),
+          backgroundColor: AppColors.primary,
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
       ),
     );
   }
