@@ -25,24 +25,7 @@ class CityPaginatedScreen extends StatelessWidget {
         body: Column(
           children: [
             // Search Field
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                onChanged: (value) =>
-                    controller.loadPaginatedCity(search: value),
-                decoration: InputDecoration(
-                  hintText: 'ابحث عن مدينة...',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
-
+            _SerchBardWidget(),
             // List View
             Expanded(
               child: Obx(
@@ -163,6 +146,32 @@ class _CityCard extends StatelessWidget {
             color: AppColors.textDisabled,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SerchBardWidget extends StatelessWidget {
+  const _SerchBardWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.put(CityController());
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        onChanged: (value) => controller.loadPaginatedCity(search: value),
+        decoration: InputDecoration(
+          hintText: 'ابحث عن مدينة...',
+          prefixIcon: const Icon(Icons.search),
+          filled: true,
+          fillColor: AppColors.surface,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+        ),
       ),
     );
   }

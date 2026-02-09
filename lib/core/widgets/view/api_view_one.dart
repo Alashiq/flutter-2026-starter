@@ -36,7 +36,7 @@ class ApiViewOne<T> extends StatelessWidget {
         imagePath:
             'assets/img/noPermission.webp', // Using same or different image
         onRetry: onReload, // Or navigate to login
-        retryText: 'تسجيل الدخول',
+        retryText: 'إعادة المحاولة',
       ),
       ApiNoPermission() => NoPermissionScreen(onRetry: onReload),
     };

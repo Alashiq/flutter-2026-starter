@@ -16,7 +16,7 @@ class NoPermissionScreen extends StatelessWidget {
       imagePath: null,
       icon: Icons.block_rounded,
       onRetry: onRetry,
-      retryText: 'عودة',
+      retryText: 'اعادة تحميل',
       primaryColor: const Color(0xFFFF9800),
     );
   }

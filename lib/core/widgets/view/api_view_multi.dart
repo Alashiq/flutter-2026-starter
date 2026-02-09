@@ -38,7 +38,7 @@ class ApiViewMulti<T> extends StatelessWidget {
         message: 'يجب تسجيل الدخول للوصول إلى هذا المحتوى',
         icon: Icons.lock_outline_rounded,
         onRetry: onReload,
-        retryText: 'تسجيل الدخول',
+        retryText: 'إعادة المحاولة',
         primaryColor: const Color(0xFFDC2626),
       ),
       ApiNoPermission() => NoPermissionScreen(onRetry: onReload),
