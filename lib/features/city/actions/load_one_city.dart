@@ -12,6 +12,7 @@ mixin LoadOneCityMixin on GetxController {
       state: cityState,
       apiCall: () => ApiClient().get('ccity/$cityId'),
       fromJson: (json) => CityOneModel.fromJson(json),
+      dataKey: 'data',
     );
   }
 }

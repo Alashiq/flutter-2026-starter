@@ -14,6 +14,7 @@ class ApiHandler {
     required Rx<ApiState<T>> state,
     required Future<http.Response> Function() apiCall,
     required T Function(Map<String, dynamic>) fromJson,
+    String dataKey = 'data',
   }) async {
     state.value = const ApiLoading();
     await Future.delayed(const Duration(seconds: 2));
@@ -24,8 +25,8 @@ class ApiHandler {
         response: response,
         state: state,
         onSuccess: (body) {
-          if (body['data'] != null) {
-            state.value = ApiSuccess(fromJson(body['data']));
+          if (body[dataKey] != null) {
+            state.value = ApiSuccess(fromJson(body[dataKey]));
           } else {
             state.value = const ApiEmpty();
           }
@@ -42,6 +43,7 @@ class ApiHandler {
     required Rx<ApiState<List<T>>> state,
     required Future<http.Response> Function() apiCall,
     required T Function(Map<String, dynamic>) fromJson,
+    String dataKey = 'data',
   }) async {
     state.value = const ApiLoading();
     await Future.delayed(const Duration(seconds: 2));
@@ -51,8 +53,8 @@ class ApiHandler {
         response: response,
         state: state,
         onSuccess: (body) {
-          if (body['data'] != null && body['data'] is List) {
-            final List<dynamic> data = body['data'];
+          if (body[dataKey] != null && body[dataKey] is List) {
+            final List<dynamic> data = body[dataKey];
             state.value = ApiSuccess(
               data
                   .map((item) => fromJson(item as Map<String, dynamic>))
@@ -75,8 +77,8 @@ class ApiHandler {
     required Future<http.Response> Function() apiCall,
     required T Function(Map<String, dynamic>) fromJson,
     required bool isLoadMore,
-    VoidCallback? onLoadMoreFailed, // callback للتراجع عن العمليات عند الفشل
-    // تم إزالة callback واستبداله بـ showAlertMessage مباشرة
+    VoidCallback? onLoadMoreFailed,
+    String dataKey = 'data',
   }) async {
     print('🟢 handlePaginatedApiCall - isLoadMore: $isLoadMore');
 
@@ -109,6 +111,7 @@ class ApiHandler {
         currentData: currentData,
         fromJson: fromJson,
         isLoadMore: isLoadMore,
+        dataKey: dataKey,
       );
 
       // إذا فشل تحميل المزيد
@@ -119,12 +122,10 @@ class ApiHandler {
         print('🔴 Load more failed, reverting to previous state');
         state.value = ApiPaginatedSuccess(currentData, currentMeta);
 
-        // استدعاء callback التراجع
         if (onLoadMoreFailed != null) {
           onLoadMoreFailed();
         }
 
-        // عرض رسالة خطأ باستخدام showAlertMessage
         showAlertMessage(
           _getErrorMessage(response.statusCode),
           type: AlertType.error,
@@ -134,17 +135,14 @@ class ApiHandler {
       print('🔴 SocketException - No Internet');
 
       if (isLoadMore && currentData != null && currentMeta != null) {
-        // عند تحميل المزيد: الاحتفاظ بالبيانات وعرض رسالة
         state.value = ApiPaginatedSuccess(currentData, currentMeta);
 
-        // استدعاء callback التراجع
         if (onLoadMoreFailed != null) {
           onLoadMoreFailed();
         }
 
         showAlertMessage('لا يوجد اتصال بالإنترنت', type: AlertType.noInternet);
       } else {
-        // عند التحميل الأول: عرض شاشة خطأ
         state.value = ApiPaginatedNoInternet(
           currentData: currentData,
           meta: currentMeta,
@@ -154,17 +152,14 @@ class ApiHandler {
       print('🔴 Error: $e');
 
       if (isLoadMore && currentData != null && currentMeta != null) {
-        // عند تحميل المزيد: الاحتفاظ بالبيانات وعرض رسالة
         state.value = ApiPaginatedSuccess(currentData, currentMeta);
 
-        // استدعاء callback التراجع
         if (onLoadMoreFailed != null) {
           onLoadMoreFailed();
         }
 
         showAlertMessage('حدث خطأ غير متوقع', type: AlertType.error);
       } else {
-        // عند التحميل الأول: عرض شاشة خطأ
         state.value = ApiPaginatedError(
           0,
           'حدث خطأ غير متوقع: $e',
@@ -196,11 +191,12 @@ class ApiHandler {
     required List<T>? currentData,
     required T Function(Map<String, dynamic>) fromJson,
     required bool isLoadMore,
+    required String dataKey,
   }) {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      if (body['success'] == true && body['data'] != null) {
-        final paginationData = body['data'];
+      if (body['success'] == true && body[dataKey] != null) {
+        final paginationData = body[dataKey];
         final meta = PaginationMeta.fromJson(paginationData);
 
         print('🟡 Pagination Meta:');
@@ -341,6 +337,7 @@ class ApiHandler {
     required Future<http.Response> Function() apiCall,
     T Function(dynamic)? fromJson, // Made optional and dynamic input
     String? successMessage,
+    String dataKey = 'data',
   }) async {
     showLoading(); // Show global loading
     state.value = const ApiLoading();
@@ -356,17 +353,17 @@ class ApiHandler {
         if (body['success'] == true) {
           T data;
           if (fromJson != null) {
-            data = fromJson(body['data'] ?? {});
+            data = fromJson(body[dataKey] ?? {});
           } else {
             // Default handling if fromJson is missing
             if (T == bool) {
               // Unsafe cast, but standard for success check
               data = true as T;
-            } else if (body['data'] != null && body['data'] is T) {
-              data = body['data'] as T;
+            } else if (body[dataKey] != null && body[dataKey] is T) {
+              data = body[dataKey] as T;
             } else {
               // Fallback: try to cast or assume dynamic
-              data = (body['data'] ?? {}) as T;
+              data = (body[dataKey] ?? {}) as T;
             }
           }
           state.value = ApiSuccess(data);

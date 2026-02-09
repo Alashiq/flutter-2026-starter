@@ -13,6 +13,7 @@ mixin LoadListCityMixin on GetxController {
       state: cityListState,
       apiCall: () => ApiClient().get('ccity$query'),
       fromJson: (json) => CityListModel.fromJson(json),
+      dataKey: 'data',
     );
   }
 }

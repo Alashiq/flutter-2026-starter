@@ -35,6 +35,7 @@ mixin LoadPaginatedCityMixin on GetxController {
       onLoadMoreFailed: () {
         currentPage = previousPage;
       },
+      dataKey: 'data',
     );
   }
 
