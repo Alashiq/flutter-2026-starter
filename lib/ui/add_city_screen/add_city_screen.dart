@@ -78,10 +78,8 @@ class AddCityScreen extends StatelessWidget {
 
                         final state = controller.addCityState.value;
                         if (state is ApiSuccess) {
-                          Get.back(); // Go back to list
-                          controller.loadPaginatedCity(); // Refresh list
-                          // No need to reset manually if we want to keep the data or if we reset on next entry.
-                          // But usually good to reset after success.
+                          Get.back();
+                          controller.loadPaginatedCity();
                           controller.resetAddCity();
                         }
                       }
