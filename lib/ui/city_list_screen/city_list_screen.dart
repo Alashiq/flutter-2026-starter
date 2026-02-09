@@ -6,6 +6,7 @@ import 'package:starter/core/widgets/auto_load/auto_load.dart';
 import 'package:starter/core/widgets/view/api_view_multi.dart';
 import 'package:starter/features/city/city_controller.dart';
 import 'package:starter/features/city/models/city_list_model.dart';
+import 'package:starter/shared/layout/back_layout_widget.dart';
 
 class CityListScreen extends StatelessWidget {
   const CityListScreen({super.key});
@@ -16,10 +17,9 @@ class CityListScreen extends StatelessWidget {
 
     return AutoLoad(
       onLoad: () => controller.loadListCity(),
-      builder: (context) => Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('قائمة المدن'), centerTitle: true),
-        body: Column(
+      builder: (context) => BackLayoutWidget(
+        title: 'قائمة المدن',
+        child: Column(
           children: [
             // Search Field
             Padding(

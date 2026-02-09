@@ -7,6 +7,8 @@ import 'package:starter/features/city/city_controller.dart';
 
 import 'package:starter/features/city/models/city_model.dart';
 
+import '../../shared/layout/back_layout_widget.dart';
+
 class CityScreen extends StatelessWidget {
   const CityScreen({super.key});
 
@@ -16,9 +18,9 @@ class CityScreen extends StatelessWidget {
 
     return AutoLoad(
       onLoad: () => controller.loadOneCity(1),
-      builder: (context) => Scaffold(
-        appBar: AppBar(title: const Text('المدينة')),
-        body: Center(
+      builder: (context) => BackLayoutWidget(
+        title: 'المدينة',
+        child: Center(
           child: Obx(
             () => ApiViewOne(
               state: controller.cityState.value,

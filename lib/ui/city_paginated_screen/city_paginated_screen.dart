@@ -7,6 +7,7 @@ import 'package:starter/core/widgets/auto_load/auto_load.dart';
 import 'package:starter/features/city/city_controller.dart';
 
 import 'package:starter/features/city/models/city_paginated_model.dart';
+import 'package:starter/shared/layout/back_layout_widget.dart';
 
 import '../../core/widgets/view/api_view_paginated.dart';
 
@@ -19,10 +20,9 @@ class CityPaginatedScreen extends StatelessWidget {
 
     return AutoLoad(
       onLoad: () => controller.loadPaginatedCity(),
-      builder: (context) => Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('قائمة المدن'), centerTitle: true),
-        body: Column(
+      builder: (context) => BackLayoutWidget(
+        title: 'قائمة المدن',
+        child: Column(
           children: [
             // Search Field
             _SerchBardWidget(),
@@ -36,27 +36,22 @@ class CityPaginatedScreen extends StatelessWidget {
                   onLoadMore: () =>
                       controller.loadPaginatedCity(isLoadMore: true),
                   builder: (cities, meta) {
-                    return Column(
+                    return ListView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       children: [
-                        Expanded(
-                          child: ListView.separated(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            itemCount: cities.length,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 12),
-                            itemBuilder: (context, index) {
-                              final city = cities[index];
-                              return _CityCard(city: city);
-                            },
+                        ...cities.map(
+                          (city) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _CityCard(city: city),
                           ),
                         ),
                         if (meta != null && !meta.isLastPage)
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             child: ElevatedButton.icon(
                               onPressed: () => controller.loadPaginatedCity(
                                 isLoadMore: true,
@@ -71,9 +66,27 @@ class CityPaginatedScreen extends StatelessWidget {
                                 ),
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                             ),
                           ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () => Get.toNamed('/add_city'),
+                          icon: const Icon(Icons.add),
+                          label: const Text('أضف مدينة جديدة'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor: Colors.grey.shade200,
+                            foregroundColor: Colors.black87,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
                       ],
                     );
                   },
@@ -81,11 +94,6 @@ class CityPaginatedScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Get.toNamed('/add_city'),
-          backgroundColor: AppColors.primary,
-          child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );
