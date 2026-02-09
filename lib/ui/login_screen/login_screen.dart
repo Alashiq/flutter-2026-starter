@@ -73,38 +73,51 @@ class LoginScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // Login Button
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (controller.loginFormKey.currentState!.validate()) {
-                        String phoneNumber =
-                            controller.loginPhoneInController.text;
-                        await controller.login(phoneNumber);
-                        final state = controller.loginState.value;
-                        if (state is ApiSuccess) {
-                          //  Get.back();
-                          // controller.loadPaginatedCity();
-                          controller.resetLogin();
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                  Obx(() {
+                    final state = controller.loginState.value;
+                    return ElevatedButton(
+                      onPressed: state is ApiLoading
+                          ? null
+                          : () async {
+                              if (controller.loginFormKey.currentState!
+                                  .validate()) {
+                                String phoneNumber =
+                                    controller.loginPhoneInController.text;
+                                await controller.login(phoneNumber);
+                                if (controller.loginState.value is ApiSuccess) {
+                                  controller.loginPhoneNumber = phoneNumber;
+                                  Get.toNamed('/activate');
+                                }
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 5,
+                        shadowColor: AppColors.primary.withOpacity(0.3),
                       ),
-                      elevation: 5,
-                      shadowColor: AppColors.primary.withOpacity(0.3),
-                    ),
-                    child: const Text(
-                      'أرسل رمز التحقق',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                      child: state is ApiLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'أرسل رمز التحقق',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    );
+                  }),
                   const SizedBox(height: 30),
 
                   // Social Login Divider

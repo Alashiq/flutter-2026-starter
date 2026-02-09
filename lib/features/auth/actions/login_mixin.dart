@@ -8,6 +8,8 @@ import 'package:starter/features/city/models/add_city_request.dart';
 mixin LoginMixin on GetxController {
   final loginState = Rx<ApiState<bool>>(const ApiInit());
 
+  String loginPhoneNumber = '';
+
   final loginFormKey = GlobalKey<FormState>();
   final loginPhoneInController = TextEditingController();
 
