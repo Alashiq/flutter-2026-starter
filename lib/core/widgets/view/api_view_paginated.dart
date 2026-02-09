@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:starter/core/network/models/pagination_meta.dart';
 import 'package:starter/core/network/api_state_paginated.dart';
-import 'package:starter/core/theme/app_colors.dart';
 import 'package:starter/core/widgets/loading/loading_inside.dart';
 import 'package:starter/core/widgets/screen_status/base_screen_status.dart';
 import 'package:starter/core/widgets/screen_status/empty_screen.dart';
@@ -10,7 +10,7 @@ import 'package:starter/core/widgets/screen_status/no_permission_screen.dart';
 
 class ApiViewPaginated<T> extends StatelessWidget {
   final ApiStatePaginated<T> state;
-  final Widget Function(List<T> items) builder;
+  final Widget Function(List<T> items, PaginationMeta? meta) builder;
   final VoidCallback onReload;
   final VoidCallback onLoadMore;
   final VoidCallback? onRetry;
@@ -69,27 +69,11 @@ class ApiViewPaginated<T> extends StatelessWidget {
               onReload();
               await Future.delayed(const Duration(seconds: 1));
             },
-            child: builder(data),
+            child: builder(data, meta),
           ),
         ),
+
         // زر تحميل المزيد
-        if (!meta.isLastPage)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            child: ElevatedButton.icon(
-              onPressed: onLoadMore,
-              icon: const Icon(Icons.arrow_downward),
-              label: Text(
-                'تحميل المزيد (${meta.currentPage}/${meta.lastPage})',
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
       ],
     );
   }
@@ -103,7 +87,7 @@ class ApiViewPaginated<T> extends StatelessWidget {
               onReload();
               await Future.delayed(const Duration(seconds: 1));
             },
-            child: builder(data),
+            child: builder(data, meta),
           ),
         ),
         Container(
@@ -134,7 +118,7 @@ class ApiViewPaginated<T> extends StatelessWidget {
               onReload();
               await Future.delayed(const Duration(seconds: 1));
             },
-            child: builder(data),
+            child: builder(data, meta),
           ),
         ),
         Container(

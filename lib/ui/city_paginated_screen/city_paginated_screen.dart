@@ -52,19 +52,46 @@ class CityPaginatedScreen extends StatelessWidget {
                   onRetry: () => controller.loadPaginatedCity(),
                   onLoadMore: () =>
                       controller.loadPaginatedCity(isLoadMore: true),
-                  builder: (cities) {
-                    return ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      itemCount: cities.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final city = cities[index];
-                        return _CityCard(city: city);
-                      },
+                  builder: (cities, meta) {
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            itemCount: cities.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final city = cities[index];
+                              return _CityCard(city: city);
+                            },
+                          ),
+                        ),
+                        if (meta != null && !meta.isLastPage)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            child: ElevatedButton.icon(
+                              onPressed: () => controller.loadPaginatedCity(
+                                isLoadMore: true,
+                              ),
+                              icon: const Icon(Icons.arrow_downward),
+                              label: Text(
+                                'تحميل المزيد (${meta.currentPage}/${meta.lastPage})',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                      ],
                     );
                   },
                 ),

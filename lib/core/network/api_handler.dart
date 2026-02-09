@@ -177,7 +177,7 @@ class ApiHandler {
 
   String _getErrorMessage(int statusCode) {
     switch (statusCode) {
-      case 404:
+      case 204:
         return 'البيانات غير متوفرة';
       case 500:
         return 'حدث خطأ في الخادم';
