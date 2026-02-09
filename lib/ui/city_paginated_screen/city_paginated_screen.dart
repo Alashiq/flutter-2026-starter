@@ -160,7 +160,7 @@ class _CityCard extends StatelessWidget {
 }
 
 class _SerchBardWidget extends StatelessWidget {
-  const _SerchBardWidget({super.key});
+  const _SerchBardWidget();
 
   @override
   Widget build(BuildContext context) {

@@ -195,6 +195,17 @@ class HomeScreen extends StatelessWidget {
                   },
                   child: const Text('City Paginated Screen'),
                 ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed('/login');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Login Screen UI'),
+                ),
                 // Instructions
                 Container(
                   padding: EdgeInsets.all(16),
