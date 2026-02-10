@@ -19,13 +19,33 @@ class CityPaginatedScreen extends StatelessWidget {
     final controller = Get.put(CityController());
 
     return AutoLoad(
-      onLoad: () => controller.loadPaginatedCity(),
+      onLoad: () async {
+        controller.resetPagination();
+        await controller.loadPaginatedCity();
+      },
       builder: (context) => BackLayoutWidget(
         title: 'قائمة المدن',
         child: Column(
           children: [
             // Search Field
             _SerchBardWidget(),
+            Container(
+              width: 160,
+              child: ElevatedButton.icon(
+                onPressed: () => Get.toNamed('/add_city'),
+                icon: const Icon(Icons.add),
+                label: const Text('أضف مدينة جديدة'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Colors.grey.shade200,
+                  foregroundColor: Colors.black87,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             // List View
             Expanded(
               child: Obx(
@@ -72,20 +92,7 @@ class CityPaginatedScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: () => Get.toNamed('/add_city'),
-                          icon: const Icon(Icons.add),
-                          label: const Text('أضف مدينة جديدة'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Colors.grey.shade200,
-                            foregroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
+
                         const SizedBox(height: 32),
                       ],
                     );
@@ -169,7 +176,8 @@ class _SerchBardWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: TextField(
-        onChanged: (value) => controller.loadPaginatedCity(search: value),
+        onChanged: (value) => controller.loadPaginatedCity(),
+        controller: controller.searchCityController,
         decoration: InputDecoration(
           hintText: 'ابحث عن مدينة...',
           prefixIcon: const Icon(Icons.search),

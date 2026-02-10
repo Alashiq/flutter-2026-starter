@@ -1,5 +1,3 @@
-import 'package:starter/features/city/models/city_model.dart';
-
 class AuthModel {
   final String? firstName;
   final String? lastName;

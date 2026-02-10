@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:starter/core/network/api_handler.dart';
 import 'package:starter/core/network/api_client.dart';
@@ -5,15 +6,14 @@ import 'package:starter/core/network/api_state_paginated.dart';
 import 'package:starter/features/city/models/city_paginated_model.dart';
 
 mixin LoadPaginatedCityMixin on GetxController {
+  final searchCityController = TextEditingController();
+
   final cityPaginatedState = Rx<ApiStatePaginated<CityPaginatedModel>>(
     const ApiPaginatedInit(),
   );
   int currentPage = 1;
 
-  Future<void> loadPaginatedCity({
-    bool isLoadMore = false,
-    String? search,
-  }) async {
+  Future<void> loadPaginatedCity({bool isLoadMore = false}) async {
     final previousPage = currentPage;
 
     if (isLoadMore) {
@@ -22,11 +22,11 @@ mixin LoadPaginatedCityMixin on GetxController {
       currentPage = 1;
     }
 
-    final searchQuery = search != null && search.isNotEmpty
-        ? '&name=$search'
+    final searchQuery = searchCityController.text.isNotEmpty
+        ? '&name=${searchCityController.text}'
         : '';
     final query = 'city?page=$currentPage$searchQuery';
-
+    print(query);
     await ApiHandler().handlePaginatedApiCall<CityPaginatedModel>(
       state: cityPaginatedState,
       apiCall: () => ApiClient().getAuth(query),
@@ -41,6 +41,7 @@ mixin LoadPaginatedCityMixin on GetxController {
 
   void resetPagination() {
     currentPage = 1;
+    searchCityController.clear();
     cityPaginatedState.value = const ApiPaginatedInit();
   }
 }
