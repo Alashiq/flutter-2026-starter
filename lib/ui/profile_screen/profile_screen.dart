@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:starter/core/utils/app_actions.dart';
 import 'package:starter/features/auth/auth_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -119,10 +120,7 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        authController.logout();
-                        Get.offAllNamed('/login');
-                      },
+                      onPressed: AppActions.logout,
                       icon: const Icon(Icons.logout),
                       label: const Text('تسجيل الخروج'),
                       style: ElevatedButton.styleFrom(

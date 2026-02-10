@@ -39,7 +39,8 @@ class AuthController extends GetxController
     }
   }
 
-  /// Logout and clear all stored data
+  /// Clear auth data from state and storage
+  /// For full logout with navigation, use [AppActions.logout]
   void logout() {
     user.value = null;
     _token.value = '';

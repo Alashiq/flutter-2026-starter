@@ -5,8 +5,14 @@ import 'package:starter/core/theme/app_colors.dart';
 class ErrorScreen extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
+  final bool logoutButton;
 
-  const ErrorScreen({super.key, required this.message, this.onRetry});
+  const ErrorScreen({
+    super.key,
+    required this.message,
+    this.onRetry,
+    this.logoutButton = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +24,7 @@ class ErrorScreen extends StatelessWidget {
       onRetry: onRetry,
       retryText: 'إعادة المحاولة',
       primaryColor: AppColors.error,
+      logoutButton: logoutButton,
     );
   }
 }

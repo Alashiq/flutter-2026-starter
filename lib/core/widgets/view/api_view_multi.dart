@@ -12,6 +12,7 @@ class ApiViewMulti<T> extends StatelessWidget {
   final Widget Function(List<T>) builder;
   final VoidCallback onReload;
   final VoidCallback? onRetry;
+  final bool logoutButton;
 
   const ApiViewMulti({
     super.key,
@@ -19,6 +20,7 @@ class ApiViewMulti<T> extends StatelessWidget {
     required this.builder,
     required this.onReload,
     this.onRetry,
+    this.logoutButton = false,
   });
 
   @override
@@ -26,13 +28,19 @@ class ApiViewMulti<T> extends StatelessWidget {
     return switch (state) {
       ApiInit() || ApiLoading() => const LoadingInsideWidget(),
       ApiSuccess<List<T>>(data: final list) =>
-        list.isEmpty ? EmptyScreen(onRetry: onRetry) : builder(list),
-      ApiEmpty() => EmptyScreen(onRetry: onRetry),
+        list.isEmpty
+            ? EmptyScreen(onRetry: onRetry, logoutButton: logoutButton)
+            : builder(list),
+      ApiEmpty() => EmptyScreen(onRetry: onRetry, logoutButton: logoutButton),
       ApiError(message: final msg) => ErrorScreen(
         message: msg,
         onRetry: onReload,
+        logoutButton: logoutButton,
       ),
-      ApiNoInternet() => NoInternetScreen(onRetry: onReload),
+      ApiNoInternet() => NoInternetScreen(
+        onRetry: onReload,
+        logoutButton: logoutButton,
+      ),
       ApiUnauthorized() => BaseScreenStatus(
         title: 'غير مصرح',
         message: 'يجب تسجيل الدخول للوصول إلى هذا المحتوى',
@@ -40,8 +48,12 @@ class ApiViewMulti<T> extends StatelessWidget {
         onRetry: onReload,
         retryText: 'إعادة المحاولة',
         primaryColor: const Color(0xFFDC2626),
+        logoutButton: logoutButton,
       ),
-      ApiNoPermission() => NoPermissionScreen(onRetry: onReload),
+      ApiNoPermission() => NoPermissionScreen(
+        onRetry: onReload,
+        logoutButton: logoutButton,
+      ),
     };
   }
 }

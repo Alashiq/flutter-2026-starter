@@ -29,6 +29,7 @@ class CityScreen extends StatelessWidget {
                 city: city,
                 onReload: () => controller.loadOneCity(1),
               ),
+              logoutButton: true,
             ),
           ),
         ),

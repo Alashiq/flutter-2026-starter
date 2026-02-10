@@ -11,12 +11,14 @@ class ApiViewOne<T> extends StatelessWidget {
   final ApiState<T> state;
   final Widget Function(T item) builder;
   final VoidCallback? onReload;
+  final bool logoutButton;
 
   const ApiViewOne({
     super.key,
     required this.state,
     required this.builder,
     this.onReload,
+    this.logoutButton = false,
   });
 
   @override
@@ -24,21 +26,28 @@ class ApiViewOne<T> extends StatelessWidget {
     return switch (state) {
       ApiInit() || ApiLoading() => const LoadingInsideWidget(),
       ApiSuccess<T>(data: final item) => builder(item),
-      ApiEmpty() => EmptyScreen(onRetry: onReload),
+      ApiEmpty() => EmptyScreen(onRetry: onReload, logoutButton: logoutButton),
       ApiError(message: final msg) => ErrorScreen(
         message: msg,
         onRetry: onReload,
+        logoutButton: logoutButton,
       ),
-      ApiNoInternet() => NoInternetScreen(onRetry: onReload),
+      ApiNoInternet() => NoInternetScreen(
+        onRetry: onReload,
+        logoutButton: logoutButton,
+      ),
       ApiUnauthorized() => BaseScreenStatus(
         title: 'غير مصرح',
         message: 'يجب تسجيل الدخول للوصول إلى هذا المحتوى',
-        imagePath:
-            'assets/img/noPermission.webp', // Using same or different image
-        onRetry: onReload, // Or navigate to login
+        imagePath: 'assets/img/noPermission.webp',
+        onRetry: onReload,
         retryText: 'إعادة المحاولة',
+        logoutButton: logoutButton,
       ),
-      ApiNoPermission() => NoPermissionScreen(onRetry: onReload),
+      ApiNoPermission() => NoPermissionScreen(
+        onRetry: onReload,
+        logoutButton: logoutButton,
+      ),
     };
   }
 }

@@ -205,6 +205,17 @@ class HomeScreen extends StatelessWidget {
                   ),
                   child: const Text('Login Screen UI'),
                 ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed('/profile');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Profile'),
+                ),
                 // Instructions
                 Container(
                   padding: EdgeInsets.all(16),

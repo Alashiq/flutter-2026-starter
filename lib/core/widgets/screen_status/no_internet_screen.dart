@@ -3,8 +3,9 @@ import 'package:starter/core/widgets/screen_status/base_screen_status.dart';
 
 class NoInternetScreen extends StatelessWidget {
   final VoidCallback? onRetry;
+  final bool logoutButton;
 
-  const NoInternetScreen({super.key, this.onRetry});
+  const NoInternetScreen({super.key, this.onRetry, this.logoutButton = false});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class NoInternetScreen extends StatelessWidget {
       onRetry: onRetry,
       retryText: 'إعادة المحاولة',
       primaryColor: const Color(0xFFFF6B6B),
+      logoutButton: logoutButton,
     );
   }
 }

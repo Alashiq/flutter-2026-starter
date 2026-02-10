@@ -6,12 +6,14 @@ class EmptyScreen extends StatelessWidget {
   final VoidCallback? onRetry;
   final String title;
   final String message;
+  final bool logoutButton;
 
   const EmptyScreen({
     super.key,
     this.onRetry,
     this.title = 'لا توجد بيانات',
     this.message = 'هذه الصفحة لا تحتوي على أي عناصر حالياً.',
+    this.logoutButton = false,
   });
 
   @override
@@ -24,6 +26,7 @@ class EmptyScreen extends StatelessWidget {
       onRetry: onRetry,
       retryText: 'تحديث البيانات',
       primaryColor: AppColors.primary,
+      logoutButton: logoutButton,
     );
   }
 }

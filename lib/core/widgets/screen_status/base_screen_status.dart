@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starter/core/utils/app_actions.dart';
 import 'package:starter/core/theme/app_colors.dart';
 import 'package:starter/core/theme/app_text_styles.dart';
 
@@ -10,6 +11,7 @@ class BaseScreenStatus extends StatelessWidget {
   final VoidCallback? onRetry;
   final String retryText;
   final Color primaryColor;
+  final bool logoutButton;
 
   const BaseScreenStatus({
     super.key,
@@ -20,6 +22,7 @@ class BaseScreenStatus extends StatelessWidget {
     this.onRetry,
     this.retryText = 'إعادة المحاولة',
     this.primaryColor = AppColors.primary,
+    this.logoutButton = false,
   }) : assert(
          imagePath != null || icon != null,
          'Must provide imagePath or icon',
@@ -95,6 +98,35 @@ class BaseScreenStatus extends StatelessWidget {
                       style: AppTextStyles.button.copyWith(
                         color: Colors.white,
                         fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              if (logoutButton) ...[
+                const SizedBox(height: 25),
+                SizedBox(
+                  height: 44,
+                  width: 168,
+                  child: TextButton.icon(
+                    onPressed: () => AppActions.logout(),
+                    icon: const Icon(Icons.logout, color: AppColors.error),
+                    label: Text(
+                      "تسجيل الخروج",
+                      style: AppTextStyles.button.copyWith(
+                        color: AppColors.error,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: const BorderSide(
+                          color: AppColors.error,
+                          width: 1,
+                        ),
                       ),
                     ),
                   ),

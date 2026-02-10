@@ -14,6 +14,7 @@ class ApiViewPaginated<T> extends StatelessWidget {
   final VoidCallback onReload;
   final VoidCallback onLoadMore;
   final VoidCallback? onRetry;
+  final bool logoutButton;
 
   const ApiViewPaginated({
     super.key,
@@ -22,6 +23,7 @@ class ApiViewPaginated<T> extends StatelessWidget {
     required this.onReload,
     required this.onLoadMore,
     this.onRetry,
+    this.logoutButton = false,
   });
 
   @override
@@ -33,9 +35,12 @@ class ApiViewPaginated<T> extends StatelessWidget {
         _buildSuccessWithLoadingIndicator(data, meta),
       ApiPaginatedSuccess(data: final data, meta: final meta) =>
         data.isEmpty
-            ? EmptyScreen(onRetry: onRetry)
+            ? EmptyScreen(onRetry: onRetry, logoutButton: logoutButton)
             : _buildSuccess(data, meta),
-      ApiPaginatedEmpty() => EmptyScreen(onRetry: onRetry),
+      ApiPaginatedEmpty() => EmptyScreen(
+        onRetry: onRetry,
+        logoutButton: logoutButton,
+      ),
       ApiPaginatedError(
         message: final msg,
         currentData: final data,
@@ -43,11 +48,15 @@ class ApiViewPaginated<T> extends StatelessWidget {
       ) =>
         data != null && data.isNotEmpty
             ? _buildSuccessWithError(data, meta, msg)
-            : ErrorScreen(message: msg, onRetry: onReload),
+            : ErrorScreen(
+                message: msg,
+                onRetry: onReload,
+                logoutButton: logoutButton,
+              ),
       ApiPaginatedNoInternet(currentData: final data, meta: final meta) =>
         data != null && data.isNotEmpty
             ? _buildSuccessWithError(data, meta, 'لا يوجد اتصال بالإنترنت')
-            : NoInternetScreen(onRetry: onReload),
+            : NoInternetScreen(onRetry: onReload, logoutButton: logoutButton),
       ApiPaginatedUnauthorized() => BaseScreenStatus(
         title: 'غير مصرح',
         message: 'يجب تسجيل الدخول للوصول إلى هذا المحتوى',
@@ -55,8 +64,12 @@ class ApiViewPaginated<T> extends StatelessWidget {
         onRetry: onReload,
         retryText: 'إعادة المحاولة',
         primaryColor: const Color(0xFFDC2626),
+        logoutButton: logoutButton,
       ),
-      ApiPaginatedNoPermission() => NoPermissionScreen(onRetry: onReload),
+      ApiPaginatedNoPermission() => NoPermissionScreen(
+        onRetry: onReload,
+        logoutButton: logoutButton,
+      ),
     };
   }
 

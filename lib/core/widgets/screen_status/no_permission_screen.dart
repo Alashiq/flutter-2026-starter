@@ -3,8 +3,13 @@ import 'package:starter/core/widgets/screen_status/base_screen_status.dart';
 
 class NoPermissionScreen extends StatelessWidget {
   final VoidCallback? onRetry;
+  final bool logoutButton;
 
-  const NoPermissionScreen({super.key, this.onRetry});
+  const NoPermissionScreen({
+    super.key,
+    this.onRetry,
+    this.logoutButton = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +23,7 @@ class NoPermissionScreen extends StatelessWidget {
       onRetry: onRetry,
       retryText: 'اعادة تحميل',
       primaryColor: const Color(0xFFFF9800),
+      logoutButton: logoutButton,
     );
   }
 }
