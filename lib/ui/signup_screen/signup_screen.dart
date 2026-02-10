@@ -7,85 +7,98 @@ import 'package:starter/core/widgets/auto_load/auto_load.dart';
 import 'package:starter/features/auth/auth_controller.dart';
 import 'package:starter/shared/validation/app_validators.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AuthController>();
+    final String phone = Get.arguments ?? '';
+
     return AutoLoad(
-      onLoad: () async => controller.resetLogin(),
+      onLoad: () async => controller.resetSignUp(),
       builder: (context) => Scaffold(
         backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: AppColors.textPrimary,
+            ),
+            onPressed: () => Get.back(),
+          ),
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Form(
-              key: controller.loginFormKey,
+              key: controller.signUpFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 60),
-                  // App Logo or Icon
+                  const SizedBox(height: 20),
                   Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.lock_person_rounded,
-                        size: 80,
-                        color: AppColors.primary,
+                    child: Text(
+                      'إنشاء حساب جديد',
+                      style: AppTextStyles.headlineMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Welcome Text
-                  Text(
-                    'مرحباً بك مجدداً',
-                    style: AppTextStyles.headlineMedium.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'قم بتسجيل الدخول للمتابعة',
+                    'يرجى إكمال البيانات للتسجيل برقم\n$phone',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 40),
 
-                  // Phone Number Field
+                  // First Name
                   _buildTextField(
-                    label: 'رقم الهاتف',
-                    hint: '09xxxxxxxxx',
-                    icon: Icons.phone_android_rounded,
-                    keyboardType: TextInputType.phone,
-                    controller: controller,
+                    label: 'الاسم الأول',
+                    hint: 'أدخل اسمك الأول',
+                    icon: Icons.person_outline,
+                    controller: controller.firstNameController,
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
 
-                  // Login Button
+                  // Last Name
+                  _buildTextField(
+                    label: 'اللقب',
+                    hint: 'أدخل لقبك',
+                    icon: Icons.person_outline,
+                    controller: controller.lastNameController,
+                  ),
+                  const SizedBox(height: 20),
+
+                  // City ID
+                  _buildTextField(
+                    label: 'رقم المدينة',
+                    hint: 'أدخل رقم المدينة',
+                    icon: Icons.location_city_outlined,
+                    controller: controller.cityIdController,
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Sign Up Button
                   Obx(() {
-                    final state = controller.loginState.value;
+                    final state = controller.signUpState.value;
                     return ElevatedButton(
                       onPressed: state is ApiLoading
                           ? null
                           : () async {
-                              if (controller.loginFormKey.currentState!
+                              if (controller.signUpFormKey.currentState!
                                   .validate()) {
-                                String phoneNumber =
-                                    controller.loginPhoneInController.text;
-                                await controller.login(phoneNumber);
-                                if (controller.loginState.value is ApiSuccess) {
-                                  controller.loginPhoneNumber = phoneNumber;
+                                await controller.signUp(phone);
+                                final result = controller.signUpState.value;
+                                if (result is ApiSuccess) {
+                                  // Navigate to activation
                                   Get.toNamed('/activate');
                                 }
                               }
@@ -110,7 +123,7 @@ class LoginScreen extends StatelessWidget {
                               ),
                             )
                           : const Text(
-                              'أرسل رمز التحقق',
+                              'تسجيل',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -118,31 +131,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                     );
                   }),
-                  const SizedBox(height: 30),
-
-                  // Sign Up Link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'ليس لديك حساب؟',
-                        style: TextStyle(color: Colors.grey.shade700),
-                      ),
-                      TextButton(
-                        onPressed: () => Get.toNamed('/signup'),
-                        child: const Text(
-                          'إنشاء حساب جديد',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Social Login Divider
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -156,9 +145,8 @@ class LoginScreen extends StatelessWidget {
     required String label,
     required String hint,
     required IconData icon,
-    bool isPassword = false,
+    required TextEditingController controller,
     TextInputType? keyboardType,
-    required AuthController controller,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,17 +157,12 @@ class LoginScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: controller.loginPhoneInController,
-          validator: AppValidators.libyaPhone,
-
-          obscureText: isPassword,
+          controller: controller,
+          validator: AppValidators.required,
           keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hint,
             prefixIcon: Icon(icon, color: AppColors.primary.withOpacity(0.7)),
-            suffixIcon: isPassword
-                ? const Icon(Icons.visibility_off_outlined)
-                : null,
             filled: true,
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.symmetric(

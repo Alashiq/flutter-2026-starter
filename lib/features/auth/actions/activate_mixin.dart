@@ -7,6 +7,9 @@ import 'package:starter/core/widgets/dialog/alert_message.dart';
 import 'package:starter/features/auth/models/auth_model.dart';
 
 mixin ActivateMixin on GetxController {
+  // Abstract property to be implemented by the controller
+  Rx<AuthModel?> get user;
+
   final activateState = Rx<ApiState<AuthModel>>(const ApiInit());
 
   final activateFormKey = GlobalKey<FormState>();
@@ -21,10 +24,20 @@ mixin ActivateMixin on GetxController {
       fromJson: (json) => AuthModel.fromJson(json),
       dataKey: 'user',
     );
-    if (activateState.value is ApiSuccess) {
-      // show first name
-      showAlertMessage(activateState.value.data!.firstName);
-      Get.toNamed('/home');
+
+    final userState = activateState.value;
+    if (userState is ApiSuccess<AuthModel>) {
+      if (userState.data.status == 1) {
+        // المستخدم جديد - يحتاج لإنشاء حساب
+        showAlertMessage('مرحباً، يرجى إكمال بيانات حسابك');
+        Get.offAllNamed('/signup');
+      } else if (userState.data.status == 2) {
+        // المستخدم مسجل - عرض صفحة البروفايل
+        // حفظ بيانات المستخدم في الـ controller
+        user.value = userState.data;
+        showAlertMessage('مرحباً ${userState.data.firstName ?? ''}');
+        Get.offAllNamed('/profile');
+      }
     }
   }
 
