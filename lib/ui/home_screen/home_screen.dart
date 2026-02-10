@@ -4,7 +4,6 @@ import 'package:starter/core/env/env.dart';
 import 'package:starter/core/widgets/dialog/alert_message.dart';
 import 'package:starter/core/widgets/dialog/confirm_message.dart';
 import 'package:starter/core/widgets/loading/loading.dart';
-import 'package:starter/ui/city_screen/city_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

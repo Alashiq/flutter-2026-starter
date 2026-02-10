@@ -8,9 +8,11 @@ import 'package:starter/ui/login_screen/login_screen.dart';
 import 'package:starter/ui/activate_screen/activate_screen.dart';
 import 'package:starter/ui/signup_screen/signup_screen.dart';
 import 'package:starter/ui/profile_screen/profile_screen.dart';
+import 'package:starter/ui/start_screen/start_screen.dart';
 
 final List<GetPage> routes = [
-  GetPage(name: '/', page: () => HomeScreen()),
+  GetPage(name: '/', page: () => StartScreen()),
+  GetPage(name: '/home', page: () => HomeScreen()),
   GetPage(name: '/city_list', page: () => CityListScreen()),
   GetPage(name: '/city_list_paginated', page: () => CityPaginatedScreen()),
   GetPage(name: '/city', page: () => CityScreen()),
