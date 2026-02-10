@@ -105,31 +105,46 @@ class BaseScreenStatus extends StatelessWidget {
               ],
               if (logoutButton) ...[
                 const SizedBox(height: 25),
-                SizedBox(
-                  height: 44,
-                  width: 168,
-                  child: TextButton.icon(
-                    onPressed: () => AppActions.logout(),
-                    icon: const Icon(Icons.logout, color: AppColors.error),
-                    label: Text(
-                      "تسجيل الخروج",
-                      style: AppTextStyles.button.copyWith(
-                        color: AppColors.error,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                Column(
+                  children: [
+                    Text(
+                      "أو",
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                        height: 1.6,
                       ),
                     ),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.error,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: const BorderSide(
-                          color: AppColors.error,
-                          width: 1,
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 44,
+                      width: 168,
+                      child: TextButton.icon(
+                        onPressed: () => AppActions.logout(),
+                        icon: const Icon(
+                          Icons.logout,
+                          color: AppColors.inactive,
+                        ),
+                        label: Text(
+                          "تسجيل الخروج",
+                          style: AppTextStyles.button.copyWith(
+                            color: AppColors.inactive,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.inactive,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: const BorderSide(
+                              color: AppColors.inactive,
+                              width: 1,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ],

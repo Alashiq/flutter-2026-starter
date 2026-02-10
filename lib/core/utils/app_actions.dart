@@ -7,6 +7,6 @@ class AppActions {
       Get.find<AuthController>().logout();
     }
 
-    Get.offAllNamed('/');
+    Get.offAllNamed('/login');
   }
 }

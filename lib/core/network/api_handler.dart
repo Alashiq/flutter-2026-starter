@@ -26,6 +26,7 @@ class ApiHandler {
         state: state,
         onSuccess: (body) {
           if (body[dataKey] != null) {
+            print(body[dataKey]);
             state.value = ApiSuccess(fromJson(body[dataKey]));
           } else {
             state.value = const ApiEmpty();

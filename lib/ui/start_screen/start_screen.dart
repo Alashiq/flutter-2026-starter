@@ -25,13 +25,25 @@ class StartScreen extends StatelessWidget {
             }
 
             if (state is ApiNoInternet) {
-              return NoInternetScreen(onRetry: () => controller.makeAuth());
+              return NoInternetScreen(
+                onRetry: () => controller.makeAuth(),
+                logoutButton: true,
+              );
             }
 
             if (state is ApiError) {
               return ErrorScreen(
                 message: (state as ApiError).message,
                 onRetry: () => controller.makeAuth(),
+                logoutButton: true,
+              );
+            }
+
+            if (state is! ApiInit) {
+              return ErrorScreen(
+                message: "حدث خطأ ما",
+                onRetry: () => controller.makeAuth(),
+                logoutButton: true,
               );
             }
 

@@ -3,6 +3,7 @@ import 'package:starter/core/network/api_state.dart';
 import 'package:starter/core/network/api_handler.dart';
 import 'package:starter/core/network/api_client.dart';
 import 'package:starter/core/storage/auth_storage.dart';
+import 'package:starter/core/utils/app_actions.dart';
 import 'package:starter/features/auth/auth_controller.dart';
 import 'package:starter/features/auth/models/auth_model.dart';
 
@@ -13,6 +14,7 @@ mixin AuthMixin on GetxController {
   Future<void> makeAuth() async {
     final token = _authMixinStorage.readToken();
 
+    await Future.delayed(const Duration(seconds: 2));
     if (token == null) {
       Get.offAllNamed('/login');
       return;
@@ -36,8 +38,7 @@ mixin AuthMixin on GetxController {
         Get.offAllNamed('/home');
       }
     } else if (result is ApiUnauthorized) {
-      await _authMixinStorage.clearAll();
-      Get.offAllNamed('/login');
+      AppActions.logout();
     }
   }
 }
