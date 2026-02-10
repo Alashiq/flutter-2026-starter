@@ -13,7 +13,6 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AuthController>();
-    final String phone = Get.arguments ?? '';
 
     return AutoLoad(
       onLoad: () async => controller.resetSignUp(),
@@ -50,7 +49,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'يرجى إكمال البيانات للتسجيل برقم\n$phone',
+                    'يرجى إكمال البيانات للتسجيل برقم\n${controller.user.value?.phone}',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -95,11 +94,11 @@ class SignUpScreen extends StatelessWidget {
                           : () async {
                               if (controller.signUpFormKey.currentState!
                                   .validate()) {
-                                await controller.signUp(phone);
+                                await controller.signUp();
                                 final result = controller.signUpState.value;
                                 if (result is ApiSuccess) {
-                                  // Navigate to activation
-                                  Get.toNamed('/activate');
+                                  // التوجيه لصفحة الملف الشخصي
+                                  Get.offAllNamed('/profile');
                                 }
                               }
                             },

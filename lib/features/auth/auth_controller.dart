@@ -7,15 +7,22 @@ import 'models/auth_model.dart';
 
 class AuthController extends GetxController
     with LoginMixin, ActivateMixin, SignUpMixin {
-  // User data
   final Rx<AuthModel?> user = Rx<AuthModel?>(null);
 
-  // TODO: Implement actual token logic
-  String? get token => null; // Placeholder
+  final RxString _token = ''.obs;
 
-  // Logout method
+  String? get token => _token.value.isEmpty ? null : _token.value;
+
+  void setAuthData(AuthModel userData) {
+    user.value = userData;
+    if (userData.token != null) {
+      _token.value = userData.token!;
+    }
+  }
+
+  // Logout
   void logout() {
     user.value = null;
-    // TODO: Clear token from storage
+    _token.value = '';
   }
 }

@@ -6,6 +6,8 @@ import 'package:starter/core/network/api_state.dart';
 import 'package:starter/features/auth/models/auth_model.dart';
 
 mixin SignUpMixin on GetxController {
+  void setAuthData(AuthModel userData);
+
   final signUpState = Rx<ApiState<AuthModel>>(const ApiInit());
 
   final signUpFormKey = GlobalKey<FormState>();
@@ -13,15 +15,14 @@ mixin SignUpMixin on GetxController {
   final lastNameController = TextEditingController();
   final cityIdController = TextEditingController();
 
-  Future<void> signUp(String phone) async {
+  Future<void> signUp() async {
     await ApiHandler().handleOperationApiCall<AuthModel>(
       state: signUpState,
-      apiCall: () => ApiClient().post(
-        'signup',
+      apiCall: () => ApiClient().postAuth(
+        'user/signup',
         body: {
-          'phone': phone,
-          'firstname': firstNameController.text,
-          'lastname': lastNameController.text,
+          'first_name': firstNameController.text,
+          'last_name': lastNameController.text,
           'city_id': cityIdController.text,
         },
       ),
@@ -29,6 +30,11 @@ mixin SignUpMixin on GetxController {
       dataKey: 'user',
       successMessage: 'تم إنشاء الحساب بنجاح',
     );
+
+    final result = signUpState.value;
+    if (result is ApiSuccess<AuthModel>) {
+      setAuthData(result.data);
+    }
   }
 
   void resetSignUp() {
