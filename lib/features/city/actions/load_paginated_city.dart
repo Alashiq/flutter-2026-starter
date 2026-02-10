@@ -25,11 +25,11 @@ mixin LoadPaginatedCityMixin on GetxController {
     final searchQuery = search != null && search.isNotEmpty
         ? '&name=$search'
         : '';
-    final query = 'citypg?page=$currentPage$searchQuery';
+    final query = 'city?page=$currentPage$searchQuery';
 
     await ApiHandler().handlePaginatedApiCall<CityPaginatedModel>(
       state: cityPaginatedState,
-      apiCall: () => ApiClient().get(query),
+      apiCall: () => ApiClient().getAuth(query),
       fromJson: (json) => CityPaginatedModel.fromJson(json),
       isLoadMore: isLoadMore,
       onLoadMoreFailed: () {

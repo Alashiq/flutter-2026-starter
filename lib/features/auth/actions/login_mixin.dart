@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:starter/core/network/api_client.dart';
 import 'package:starter/core/network/api_handler.dart';
 import 'package:starter/core/network/api_state.dart';
-import 'package:starter/features/city/models/add_city_request.dart';
 
 mixin LoginMixin on GetxController {
   final loginState = Rx<ApiState<bool>>(const ApiInit());
@@ -18,6 +17,7 @@ mixin LoginMixin on GetxController {
       state: loginState,
       apiCall: () => ApiClient().post('login', body: {'phone': phoneNumber}),
       successMessage: 'تم تسجيل الدخول بنجاح',
+      showSuccessMessage: false,
     );
   }
 

@@ -10,7 +10,7 @@ mixin LoadOneCityMixin on GetxController {
   Future<void> loadOneCity(int cityId) async {
     await ApiHandler().handleItemApiCall<CityOneModel>(
       state: cityState,
-      apiCall: () => ApiClient().get('ccity/$cityId'),
+      apiCall: () => ApiClient().getAuth('city/$cityId'),
       fromJson: (json) => CityOneModel.fromJson(json),
       dataKey: 'data',
     );

@@ -4,24 +4,24 @@ import 'package:starter/core/network/api_client.dart';
 import 'package:starter/core/network/api_handler.dart';
 import 'package:starter/core/network/api_state.dart';
 import 'package:starter/features/auth/models/auth_model.dart';
-import 'package:starter/features/city/models/city_model.dart';
+import 'package:starter/features/auth/models/city_signup_model.dart';
 
 mixin SignUpMixin on GetxController {
   void setAuthData(AuthModel userData);
 
   final signUpState = Rx<ApiState<AuthModel>>(const ApiInit());
-  final citiesState = Rx<ApiState<List<CityOneModel>>>(const ApiInit());
+  final citiesState = Rx<ApiState<List<CitySignUpModel>>>(const ApiInit());
 
   final signUpFormKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-  final Rx<CityOneModel?> selectedCity = Rx<CityOneModel?>(null);
+  final Rx<CitySignUpModel?> selectedCity = Rx<CitySignUpModel?>(null);
 
   Future<void> fetchCities() async {
-    await ApiHandler().handleListApiCall<CityOneModel>(
+    await ApiHandler().handleListApiCall<CitySignUpModel>(
       state: citiesState,
-      apiCall: () => ApiClient().get('ccity'),
-      fromJson: (json) => CityOneModel.fromJson(json),
+      apiCall: () => ApiClient().getAuth('city/list'),
+      fromJson: (json) => CitySignUpModel.fromJson(json),
       dataKey: 'data',
     );
   }
@@ -45,6 +45,7 @@ mixin SignUpMixin on GetxController {
     final result = signUpState.value;
     if (result is ApiSuccess<AuthModel>) {
       setAuthData(result.data);
+      Get.offAllNamed('/');
     }
   }
 

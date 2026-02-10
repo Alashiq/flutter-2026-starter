@@ -17,7 +17,7 @@ class ApiHandler {
     String dataKey = 'data',
   }) async {
     state.value = const ApiLoading();
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
 
     try {
       final response = await apiCall();
@@ -46,7 +46,7 @@ class ApiHandler {
     String dataKey = 'data',
   }) async {
     state.value = const ApiLoading();
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     try {
       final response = await apiCall();
       _processResponse<List<T>>(
@@ -338,10 +338,11 @@ class ApiHandler {
     T Function(dynamic)? fromJson, // Made optional and dynamic input
     String? successMessage,
     String dataKey = 'data',
+    bool showSuccessMessage = true,
   }) async {
     showLoading(); // Show global loading
     state.value = const ApiLoading();
-    await Future.delayed(const Duration(seconds: 4)); // Add 2 seconds delay
+    await Future.delayed(const Duration(seconds: 1)); // Add 2 seconds delay
 
     try {
       final response = await apiCall();
@@ -368,7 +369,8 @@ class ApiHandler {
           }
           state.value = ApiSuccess(data);
 
-          if (successMessage != null || body['message'] != null) {
+          if (showSuccessMessage &&
+              (successMessage != null || body['message'] != null)) {
             showAlertMessage(
               successMessage ?? body['message'],
               type: AlertType.success,

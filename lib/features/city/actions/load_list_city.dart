@@ -11,7 +11,7 @@ mixin LoadListCityMixin on GetxController {
     final query = search != null ? '?name=$search' : '';
     await ApiHandler().handleListApiCall<CityListModel>(
       state: cityListState,
-      apiCall: () => ApiClient().get('ccity$query'),
+      apiCall: () => ApiClient().getAuth('city/list$query'),
       fromJson: (json) => CityListModel.fromJson(json),
       dataKey: 'data',
     );

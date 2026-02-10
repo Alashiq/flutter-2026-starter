@@ -20,9 +20,9 @@ mixin ActivateMixin on GetxController {
       state: activateState,
       apiCall: () =>
           ApiClient().post('activate', body: {'phone': phone, 'otp': otp}),
-      successMessage: 'تم تفعيل الحساب بنجاح',
       fromJson: (json) => AuthModel.fromJson(json),
       dataKey: 'user',
+      showSuccessMessage: false,
     );
 
     final userState = activateState.value;
@@ -34,7 +34,7 @@ mixin ActivateMixin on GetxController {
         Get.offAllNamed('/signup');
       } else if (userState.data.status == 2) {
         showAlertMessage('مرحباً ${userState.data.firstName ?? ''}');
-        Get.offAllNamed('/profile');
+        Get.offAllNamed('/');
       }
     }
   }

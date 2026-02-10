@@ -6,7 +6,7 @@ import 'package:starter/core/theme/app_text_styles.dart';
 import 'package:starter/core/widgets/auto_load/auto_load.dart';
 import 'package:starter/core/widgets/view/api_view_multi.dart';
 import 'package:starter/features/auth/auth_controller.dart';
-import 'package:starter/features/city/models/city_model.dart';
+import 'package:starter/features/auth/models/city_signup_model.dart';
 import 'package:starter/shared/validation/app_validators.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -94,11 +94,10 @@ class SignUpScreen extends StatelessWidget {
                               if (controller.signUpFormKey.currentState!
                                   .validate()) {
                                 await controller.signUp();
-                                final result = controller.signUpState.value;
-                                if (result is ApiSuccess) {
-                                  // التوجيه لصفحة الملف الشخصي
-                                  Get.offAllNamed('/profile');
-                                }
+                                // final result = controller.signUpState.value;
+                                // if (result is ApiSuccess) {
+                                //   // التوجيه لصفحة الملف الشخصي
+                                // }
                               }
                             },
                       style: ElevatedButton.styleFrom(
@@ -149,12 +148,12 @@ class SignUpScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Obx(
-          () => ApiViewMulti<CityOneModel>(
+          () => ApiViewMulti<CitySignUpModel>(
             state: controller.citiesState.value,
             onReload: () => controller.fetchCities(),
             onRetry: () => controller.fetchCities(),
             builder: (cities) {
-              return DropdownButtonFormField<CityOneModel>(
+              return DropdownButtonFormField<CitySignUpModel>(
                 value: controller.selectedCity.value,
                 validator: (value) {
                   if (value == null) {
@@ -191,12 +190,12 @@ class SignUpScreen extends StatelessWidget {
                   ),
                 ),
                 items: cities.map((city) {
-                  return DropdownMenuItem<CityOneModel>(
+                  return DropdownMenuItem<CitySignUpModel>(
                     value: city,
                     child: Text(city.name),
                   );
                 }).toList(),
-                onChanged: (CityOneModel? value) {
+                onChanged: (CitySignUpModel? value) {
                   controller.selectedCity.value = value;
                 },
               );
