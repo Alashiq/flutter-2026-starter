@@ -4,6 +4,7 @@ import 'package:starter/core/network/api_client.dart';
 import 'package:starter/core/network/api_handler.dart';
 import 'package:starter/core/network/api_state.dart';
 import 'package:starter/core/widgets/dialog/alert_message.dart';
+import 'package:starter/core/storage/auth_storage.dart';
 import 'package:starter/features/auth/models/auth_model.dart';
 
 mixin ActivateMixin on GetxController {
@@ -29,12 +30,19 @@ mixin ActivateMixin on GetxController {
     if (userState is ApiSuccess<AuthModel>) {
       setAuthData(userState.data);
 
+      // Save token to storage
+      if (userState.data.token != null) {
+        await AuthStorage().saveToken(userState.data.token!);
+      }
+
       if (userState.data.status == 1) {
+        // New user - redirect to signup
         showAlertMessage('مرحباً، يرجى إكمال بيانات حسابك');
         Get.offAllNamed('/signup');
       } else if (userState.data.status == 2) {
+        // Existing user - redirect to home
         showAlertMessage('مرحباً ${userState.data.firstName ?? ''}');
-        Get.offAllNamed('/');
+        Get.offAllNamed('/home');
       }
     }
   }

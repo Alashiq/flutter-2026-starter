@@ -45,7 +45,7 @@ mixin SignUpMixin on GetxController {
     final result = signUpState.value;
     if (result is ApiSuccess<AuthModel>) {
       setAuthData(result.data);
-      Get.offAllNamed('/');
+      Get.offAllNamed('/home');
     }
   }
 
