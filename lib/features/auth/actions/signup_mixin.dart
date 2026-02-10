@@ -4,16 +4,27 @@ import 'package:starter/core/network/api_client.dart';
 import 'package:starter/core/network/api_handler.dart';
 import 'package:starter/core/network/api_state.dart';
 import 'package:starter/features/auth/models/auth_model.dart';
+import 'package:starter/features/city/models/city_model.dart';
 
 mixin SignUpMixin on GetxController {
   void setAuthData(AuthModel userData);
 
   final signUpState = Rx<ApiState<AuthModel>>(const ApiInit());
+  final citiesState = Rx<ApiState<List<CityOneModel>>>(const ApiInit());
 
   final signUpFormKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-  final cityIdController = TextEditingController();
+  final Rx<CityOneModel?> selectedCity = Rx<CityOneModel?>(null);
+
+  Future<void> fetchCities() async {
+    await ApiHandler().handleListApiCall<CityOneModel>(
+      state: citiesState,
+      apiCall: () => ApiClient().get('ccity'),
+      fromJson: (json) => CityOneModel.fromJson(json),
+      dataKey: 'data',
+    );
+  }
 
   Future<void> signUp() async {
     await ApiHandler().handleOperationApiCall<AuthModel>(
@@ -23,7 +34,7 @@ mixin SignUpMixin on GetxController {
         body: {
           'first_name': firstNameController.text,
           'last_name': lastNameController.text,
-          'city_id': cityIdController.text,
+          'city_id': selectedCity.value?.id.toString() ?? '',
         },
       ),
       fromJson: (json) => AuthModel.fromJson(json),
@@ -41,12 +52,11 @@ mixin SignUpMixin on GetxController {
     signUpState.value = const ApiInit();
     firstNameController.clear();
     lastNameController.clear();
-    cityIdController.clear();
+    selectedCity.value = null;
   }
 
   void disposeSignUpControllers() {
     firstNameController.dispose();
     lastNameController.dispose();
-    cityIdController.dispose();
   }
 }

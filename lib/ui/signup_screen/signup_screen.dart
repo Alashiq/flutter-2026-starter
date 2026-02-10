@@ -4,7 +4,9 @@ import 'package:starter/core/network/api_state.dart';
 import 'package:starter/core/theme/app_colors.dart';
 import 'package:starter/core/theme/app_text_styles.dart';
 import 'package:starter/core/widgets/auto_load/auto_load.dart';
+import 'package:starter/core/widgets/view/api_view_multi.dart';
 import 'package:starter/features/auth/auth_controller.dart';
+import 'package:starter/features/city/models/city_model.dart';
 import 'package:starter/shared/validation/app_validators.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -15,7 +17,10 @@ class SignUpScreen extends StatelessWidget {
     final controller = Get.find<AuthController>();
 
     return AutoLoad(
-      onLoad: () async => controller.resetSignUp(),
+      onLoad: () async {
+        controller.resetSignUp();
+        await controller.fetchCities();
+      },
       builder: (context) => Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -75,14 +80,8 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // City ID
-                  _buildTextField(
-                    label: 'رقم المدينة',
-                    hint: 'أدخل رقم المدينة',
-                    icon: Icons.location_city_outlined,
-                    controller: controller.cityIdController,
-                    keyboardType: TextInputType.number,
-                  ),
+                  // City Dropdown
+                  _buildCityDropdown(controller),
                   const SizedBox(height: 40),
 
                   // Sign Up Button
@@ -137,6 +136,74 @@ class SignUpScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCityDropdown(AuthController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'المدينة',
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        Obx(
+          () => ApiViewMulti<CityOneModel>(
+            state: controller.citiesState.value,
+            onReload: () => controller.fetchCities(),
+            onRetry: () => controller.fetchCities(),
+            builder: (cities) {
+              return DropdownButtonFormField<CityOneModel>(
+                value: controller.selectedCity.value,
+                validator: (value) {
+                  if (value == null) {
+                    return 'يرجى اختيار المدينة';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  hintText: 'اختر المدينة',
+                  prefixIcon: Icon(
+                    Icons.location_city_outlined,
+                    color: AppColors.primary.withOpacity(0.7),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 20,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+                items: cities.map((city) {
+                  return DropdownMenuItem<CityOneModel>(
+                    value: city,
+                    child: Text(city.name),
+                  );
+                }).toList(),
+                onChanged: (CityOneModel? value) {
+                  controller.selectedCity.value = value;
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
