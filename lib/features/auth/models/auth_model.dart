@@ -3,6 +3,7 @@ class AuthModel {
   final String? lastName;
   final String? phone;
   final String? photo;
+  final String? city;
   final String? token;
   final int? point;
   final num? balance;
@@ -14,6 +15,7 @@ class AuthModel {
     this.lastName,
     this.phone,
     this.photo,
+    this.city,
     this.token,
     this.point,
     this.balance,
@@ -27,6 +29,7 @@ class AuthModel {
       lastName: json['lastname'],
       phone: json['phone'],
       photo: json['photo'],
+      city: json['city'],
       token: json['token'],
       point: json['point'] != null
           ? int.tryParse(json['point'].toString())
