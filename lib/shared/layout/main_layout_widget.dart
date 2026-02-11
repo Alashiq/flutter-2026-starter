@@ -25,7 +25,13 @@ class MainLayoutWidget extends StatelessWidget {
       body: Column(
         children: [
           child,
-          BottomNavbarWidget(activePageId: activePageId),
+          Hero(
+            tag: 'bottom_nav_bar',
+            child: Material(
+              type: MaterialType.transparency,
+              child: BottomNavbarWidget(activePageId: activePageId),
+            ),
+          ),
         ],
       ),
     );
