@@ -11,11 +11,13 @@ import 'package:starter/ui/signup_screen/signup_screen.dart';
 import 'package:starter/ui/onboarding_screen/onboarding_screen.dart';
 import 'package:starter/ui/profile_screen/profile_screen.dart';
 import 'package:starter/ui/splash_screen/splash_screen.dart';
+import 'package:starter/ui/change_user_city_screen/change_user_city_screen.dart';
 
 final List<GetPage> routes = [
   GetPage(name: '/', page: () => const SplashScreen()),
   GetPage(name: '/start', page: () => StartScreen()),
   GetPage(name: '/home', page: () => HomeScreen()),
+  GetPage(name: '/change_city', page: () => const ChangeUserCityScreen()),
   GetPage(name: '/city_list', page: () => CityListScreen()),
   GetPage(name: '/city_list_paginated', page: () => CityPaginatedScreen()),
   GetPage(name: '/city', page: () => CityScreen()),

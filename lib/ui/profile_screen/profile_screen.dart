@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:starter/core/theme/app_colors.dart';
 import 'package:starter/core/utils/app_actions.dart';
+import 'package:starter/core/widgets/dialog/confirm_message.dart';
 import 'package:starter/features/auth/auth_controller.dart';
 import 'package:starter/shared/layout/main_layout_widget.dart';
 
@@ -248,7 +249,7 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      onTap: () => Get.toNamed('/home'),
+                      onTap: () => Get.toNamed('/change_city'),
                     ),
                     const SizedBox(height: 12),
                     _buildProfileOption(
@@ -256,7 +257,8 @@ class ProfileScreen extends StatelessWidget {
                       title: "الإشعارات",
                       subtitle: "عرض الإعدادات",
                       onTap: () {
-                        // Placeholder navigation
+                        // Placeholder navigation as requested
+                        Get.toNamed('/change_city');
                       },
                     ),
                     const SizedBox(height: 12),
@@ -547,43 +549,9 @@ class ProfileScreen extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            Get.dialog(
-              AlertDialog(
-                title: const Text(
-                  'تسجيل الخروج',
-                  style: TextStyle(fontFamily: 'Cairo'),
-                ),
-                content: const Text(
-                  'هل أنت متأكد من تسجيل الخروج؟',
-                  style: TextStyle(fontFamily: 'Cairo'),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text(
-                      'إلغاء',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontFamily: 'Cairo',
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                      AppActions.logout();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text(
-                      'تسجيل الخروج',
-                      style: TextStyle(fontFamily: 'Cairo'),
-                    ),
-                  ),
-                ],
-              ),
+            showConfirmMessage(
+              message: "هل أنت متأكد من تسجيل الخروج ؟",
+              onConfirm: AppActions.logout,
             );
           },
           borderRadius: BorderRadius.circular(20),

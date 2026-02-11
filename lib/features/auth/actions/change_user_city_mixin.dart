@@ -1,23 +1,26 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:starter/core/network/api_client.dart';
 import 'package:starter/core/network/api_handler.dart';
 import 'package:starter/core/network/api_state.dart';
-import 'package:starter/features/auth/models/auth_model.dart';
+import 'package:starter/features/auth/auth_controller.dart';
 import 'package:starter/features/auth/models/city_user_model.dart';
+import 'package:starter/core/widgets/dialog/alert_message.dart';
 
 mixin ChangeUserCityMixin on GetxController {
-  void setAuthData(AuthModel userData);
+  // State for the change city operation
+  final changeCityState = Rx<ApiState<bool>>(const ApiInit());
 
-  final signUpState = Rx<ApiState<AuthModel>>(const ApiInit());
+  // State for loading cities
   final citiesState = Rx<ApiState<List<CityUserModel>>>(const ApiInit());
 
-  final signUpFormKey = GlobalKey<FormState>();
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
+  // Selected city
   final Rx<CityUserModel?> selectedCity = Rx<CityUserModel?>(null);
 
+  // Fetch list of cities
   Future<void> fetchCities() async {
+    // Reset state on start
+    selectedCity.value = null;
+
     await ApiHandler().handleListApiCall<CityUserModel>(
       state: citiesState,
       apiCall: () => ApiClient().getAuth('city/list'),
@@ -26,38 +29,37 @@ mixin ChangeUserCityMixin on GetxController {
     );
   }
 
-  Future<void> signUp() async {
-    await ApiHandler().handleOperationApiCall<AuthModel>(
-      state: signUpState,
+  // Update user city
+  Future<void> changeUserCity() async {
+    if (selectedCity.value == null) {
+      showAlertMessage('يرجى اختيار المدينة', type: AlertType.warning);
+      return;
+    }
+
+    await ApiHandler().handleOperationApiCall<bool>(
+      state: changeCityState,
       apiCall: () => ApiClient().postAuth(
-        'user/signup',
-        body: {
-          'first_name': firstNameController.text,
-          'last_name': lastNameController.text,
-          'city_id': selectedCity.value?.id.toString() ?? '',
-        },
+        'user/city',
+        body: {'city_id': selectedCity.value!.id.toString()},
       ),
-      fromJson: (json) => AuthModel.fromJson(json),
-      dataKey: 'user',
-      successMessage: 'تم إنشاء الحساب بنجاح',
+      successMessage: 'تم تحديث المدينة بنجاح',
     );
 
-    final result = signUpState.value;
-    if (result is ApiSuccess<AuthModel>) {
-      setAuthData(result.data);
-      Get.offAllNamed('/home');
+    if (changeCityState.value is ApiSuccess) {
+      final authController = Get.find<AuthController>();
+      if (authController.user.value != null) {
+        authController.user.value = authController.user.value!.copyWith(
+          city: selectedCity.value!.name,
+        );
+        authController.user.refresh();
+      }
+      Get.back();
     }
   }
 
-  void resetSignUp() {
-    signUpState.value = const ApiInit();
-    firstNameController.clear();
-    lastNameController.clear();
+  void resetChangeCity() {
+    changeCityState.value = const ApiInit();
     selectedCity.value = null;
-  }
-
-  void disposeSignUpControllers() {
-    firstNameController.dispose();
-    lastNameController.dispose();
+    citiesState.value = const ApiInit();
   }
 }

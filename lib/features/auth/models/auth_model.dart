@@ -54,7 +54,34 @@ class AuthModel {
       'point': point,
       'balance': balance,
       'notifications': notifications,
+      'city': city,
       'status': status,
     };
+  }
+
+  AuthModel copyWith({
+    String? firstName,
+    String? lastName,
+    String? phone,
+    String? photo,
+    String? city,
+    String? token,
+    int? point,
+    num? balance,
+    int? notifications,
+    int? status,
+  }) {
+    return AuthModel(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      phone: phone ?? this.phone,
+      photo: photo ?? this.photo,
+      city: city ?? this.city,
+      token: token ?? this.token,
+      point: point ?? this.point,
+      balance: balance ?? this.balance,
+      notifications: notifications ?? this.notifications,
+      status: status ?? this.status,
+    );
   }
 }
