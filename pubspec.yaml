@@ -109,3 +109,64 @@ flutter:
   #
   # لإضافة خطوط مخصصة إضافية، قم بإنشاء مجلد fonts/ وأضف الملفات هنا
 
+  fonts:
+  - family: Cairo
+    fonts:
+      - asset: assets/fonts/Cairo-Bold.ttf
+        weight: 700
+
+  - family: Droid
+    fonts:
+      - asset: assets/fonts/Droid.ttf
+        weight: 400
+
+  - family: Monadi
+    fonts:
+      - asset: assets/fonts/Monadi.ttf
+        weight: 400
+  - family: Swissra-Light
+    fonts:
+      - asset: assets/fonts/Swissra-Light.otf
+        weight: 400
+  - family: Swissra-Normal
+    fonts:
+      - asset: assets/fonts/Swissra-Normal.ttf
+        weight: 400
+  - family: Swissra-Medium
+    fonts:
+      - asset: assets/fonts/Swissra-Medium.otf
+        weight: 400
+  - family: Swissra-Heavy
+    fonts:
+      - asset: assets/fonts/Swissra-Heavy.otf
+        weight: 400
+  - family: Adelle
+    fonts:
+      - asset: assets/fonts/Adelle Sans ARA Regular.ttf
+  - family: JF-Flat
+    fonts:
+      - asset: assets/fonts/JF-Flat-regular.ttf
+  - family: LamaSans-Regular
+    fonts:
+      - asset: assets/fonts/LamaSans-Regular.ttf
+  - family: LamaSans-Medium
+    fonts:
+      - asset: assets/fonts/LamaSans-Medium.ttf
+  - family: LamaSans-SemiBold
+    fonts:
+      - asset: assets/fonts/LamaSans-SemiBold.ttf
+
+
+
+  - family: SomarSans-Regular
+    fonts:
+      - asset: assets/fonts/SomarSans-Regular.ttf
+  - family: SomarSans-Medium
+    fonts:
+      - asset: assets/fonts/SomarSans-Medium.ttf
+  - family: SomarSans-SemiBold
+    fonts:
+      - asset: assets/fonts/SomarSans-SemiBold.ttf
+  - family: SomarSans-Light
+    fonts:
+      - asset: assets/fonts/SomarSans-Light.ttf
