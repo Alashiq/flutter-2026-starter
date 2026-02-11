@@ -7,6 +7,7 @@ mixin StartTheAppMixin on GetxController {
 
   Future<void> startTheApp() async {
     final authController = Get.find<AuthController>();
+    _onboardingStorage.clearOnboarding();
     if (!_onboardingStorage.isOnboardingSeen()) {
       Get.offAllNamed('/onboarding');
     } else {

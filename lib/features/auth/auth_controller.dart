@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:starter/core/storage/auth_storage.dart';
 import 'package:starter/features/auth/actions/auth_mixin.dart';
+import 'package:starter/features/auth/actions/onboarding_mixin.dart';
 
 import 'actions/activate_mixin.dart';
 import 'actions/login_mixin.dart';
@@ -9,7 +10,13 @@ import 'actions/start_the_app_mixin.dart';
 import 'models/auth_model.dart';
 
 class AuthController extends GetxController
-    with LoginMixin, ActivateMixin, SignUpMixin, AuthMixin, StartTheAppMixin {
+    with
+        LoginMixin,
+        ActivateMixin,
+        SignUpMixin,
+        AuthMixin,
+        StartTheAppMixin,
+        OnboardingMixin {
   final AuthStorage _authStorage = AuthStorage();
 
   final Rx<AuthModel?> user = Rx<AuthModel?>(null);
