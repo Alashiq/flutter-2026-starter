@@ -14,7 +14,7 @@ class StartScreen extends StatelessWidget {
     final controller = Get.put(AuthController());
 
     return AutoLoad(
-      onLoad: () => controller.makeAuth(),
+      onLoad: () => controller.startTheApp(),
       builder: (context) => Scaffold(
         body: Center(
           child: Obx(() {
@@ -39,7 +39,7 @@ class StartScreen extends StatelessWidget {
               );
             }
 
-            if (state is! ApiInit) {
+            if (state is! ApiInit && state is! ApiSuccess) {
               return ErrorScreen(
                 message: "حدث خطأ ما",
                 onRetry: () => controller.makeAuth(),

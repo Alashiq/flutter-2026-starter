@@ -7,6 +7,7 @@ import 'package:starter/ui/city_paginated_screen/city_paginated_screen.dart';
 import 'package:starter/ui/login_screen/login_screen.dart';
 import 'package:starter/ui/activate_screen/activate_screen.dart';
 import 'package:starter/ui/signup_screen/signup_screen.dart';
+import 'package:starter/ui/onboarding_screen/onboarding_screen.dart';
 import 'package:starter/ui/profile_screen/profile_screen.dart';
 import 'package:starter/ui/start_screen/start_screen.dart';
 
@@ -22,4 +23,5 @@ final List<GetPage> routes = [
   GetPage(name: '/activate', page: () => const ActivateScreen()),
   GetPage(name: '/signup', page: () => const SignUpScreen()),
   GetPage(name: '/profile', page: () => const ProfileScreen()),
+  GetPage(name: '/onboarding', page: () => const OnboardingScreen()),
 ];

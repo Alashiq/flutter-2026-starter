@@ -14,7 +14,6 @@ mixin AuthMixin on GetxController {
   Future<void> makeAuth() async {
     final token = _authMixinStorage.readToken();
 
-    await Future.delayed(const Duration(seconds: 2));
     if (token == null) {
       Get.offAllNamed('/login');
       return;
