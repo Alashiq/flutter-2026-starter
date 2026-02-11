@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:starter/ui/start_screen/start_screen.dart';
 import 'package:starter/ui/add_city_screen/add_city_screen.dart';
 import 'package:starter/ui/city_list_screen/city_list_screen.dart';
 import 'package:starter/ui/city_screen/city_screen.dart';
@@ -9,10 +10,11 @@ import 'package:starter/ui/activate_screen/activate_screen.dart';
 import 'package:starter/ui/signup_screen/signup_screen.dart';
 import 'package:starter/ui/onboarding_screen/onboarding_screen.dart';
 import 'package:starter/ui/profile_screen/profile_screen.dart';
-import 'package:starter/ui/start_screen/start_screen.dart';
+import 'package:starter/ui/splash_screen/splash_screen.dart';
 
 final List<GetPage> routes = [
-  GetPage(name: '/', page: () => StartScreen()),
+  GetPage(name: '/', page: () => const SplashScreen()),
+  GetPage(name: '/start', page: () => StartScreen()),
   GetPage(name: '/home', page: () => HomeScreen()),
   GetPage(name: '/city_list', page: () => CityListScreen()),
   GetPage(name: '/city_list_paginated', page: () => CityPaginatedScreen()),

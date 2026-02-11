@@ -13,134 +13,121 @@ class OnboardingScreen extends StatelessWidget {
     final onboardKey = GlobalKey<IntroductionScreenState>();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: GetBuilder<AuthController>(
         init: Get.find<AuthController>(),
         builder: (controller) => Directionality(
           textDirection: TextDirection.rtl,
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            width: double.infinity,
-            child: IntroductionScreen(
-              globalBackgroundColor: const Color(0xffeff1f7),
-              key: onboardKey,
-              onChange: (value) {
-                controller.onboarding = value;
-                controller.update();
-              },
-              bodyPadding: const EdgeInsets.fromLTRB(0, 140, 0, 0),
-              globalHeader: Container(
-                height: 50,
-                alignment: Alignment.bottomCenter,
-                margin: const EdgeInsets.fromLTRB(10, 60, 10, 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(width: 80),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          // Assuming Ozon.jpg is a logo, replacing with a placeholder or app logo if valid
-                          // If 'assets/img/Ozon.jpg' exists, we use it. If not, text or Icon.
-                          // User provided path in their code, assuming it exists or I should use Icon.
-                          // Let's use a safe Icon fallback if image fails or just the Image as requested.
-                          child: Container(
-                            // Placeholder for logo if image missing
-                            height: 42,
-                            width: 42,
-                            color: AppColors.primary,
-                            child: const Icon(Icons.star, color: Colors.white),
-                          ),
-                        ),
+          child: Column(
+            children: [
+              Expanded(
+                child: IntroductionScreen(
+                  globalBackgroundColor: Colors.white,
+                  key: onboardKey,
+                  // allowImplicitScrolling: true,
+                  // autoScrollDuration: 4000,
+                  // infiniteAutoScroll: true,
+                  onChange: (value) {
+                    controller.onboarding = value;
+                    controller.update();
+                  },
+                  bodyPadding: const EdgeInsets.only(top: 100),
+                  globalHeader: Align(
+                    alignment: Alignment.topRight,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: controller.onboarding != 2
+                            ? TextButton(
+                                onPressed: () => controller.endBoarding(),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: AppColors.primary
+                                      .withOpacity(0.1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: Text(
+                                  "تخطي",
+                                  style: TextStyle(
+                                    fontFamily: 'Cairo',
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
                       ),
                     ),
-                    Container(
-                      width: 80,
-                      alignment: Alignment.center,
-                      child: controller.onboarding != 2
-                          ? InkWell(
-                              onTap: () {
-                                controller.endBoarding();
-                              },
-                              child: const Text(
-                                "تخطي",
-                                style: TextStyle(
-                                  fontFamily: 'Adelle',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff5a5a5a),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            )
-                          : Container(),
+                  ),
+                  pages: [
+                    _buildPageViewModel(
+                      "ادارة حسابك",
+                      "تحكم في حساب الانترنت الخاص بك عبر تطبيق اوزون وسهولة الوصول لكل ما يهمك",
+                      'assets/svg/onboarding-1.svg',
+                    ),
+                    _buildPageViewModel(
+                      "الخدمات المضافة",
+                      "إستفد من ميزات حصرية مثل الدعم الفني المباشر، دليل الأبراج، والإشعارات الفورية",
+                      'assets/svg/onboarding-2.svg',
+                    ),
+                    _buildPageViewModel(
+                      "متجر اوزون",
+                      "تسوق بسهولة واشتري كروت الشحن مباشرة عبر التطبيق بآمان تام",
+                      'assets/svg/onboarding-3.svg',
                     ),
                   ],
-                ),
-              ),
-              globalFooter: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.fromLTRB(20, 0, 20, 46),
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (controller.onboarding != 2) {
-                      onboardKey.currentState?.animateScroll(
-                        controller.onboarding + 1,
-                      );
-                    } else {
-                      controller.endBoarding();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    controller.onboarding != 2 ? "التالي" : "إبدأ الأن",
-                    style: const TextStyle(
-                      fontFamily: 'Adelle',
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
+                  showNextButton: false,
+                  showDoneButton: false,
+                  dotsDecorator: DotsDecorator(
+                    size: const Size.square(10.0),
+                    activeSize: const Size(30.0, 10.0),
+                    activeColor: AppColors.primary,
+                    color: AppColors.primary.withOpacity(0.3),
+                    spacing: const EdgeInsets.symmetric(horizontal: 4.0),
+                    activeShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
                     ),
                   ),
                 ),
               ),
-              pages: [
-                _buildPageViewModel(
-                  "ادارة حسابك",
-                  "تحكم في حساب الانترنت الخاص بك عبر تطبيق اوزون",
-                  'assets/svg/onboarding-1.svg',
-                  true,
-                ),
-                _buildPageViewModel(
-                  "الخدمات المضافة",
-                  "إستفد من الخدمات المضافة التي تقدمها اوزون لمشتركيها من الدعم الفني ودليل ابراج الشركة والإشعارات",
-                  'assets/svg/onboarding-2.svg',
-                  true,
-                ),
-                _buildPageViewModel(
-                  "متجر اوزون",
-                  "إشتري كروت اوزون مباشره من تطبيق اوزون عبر بطاقتك المصرفية",
-                  'assets/svg/onboarding-3.svg', // Changed extension to svg based on user saying "assets/svg"
-                  true,
-                ),
-              ],
-              showNextButton: false,
-              showDoneButton: false,
-              dotsDecorator: DotsDecorator(
-                size: const Size.square(9.0),
-                activeSize: const Size(20.0, 9.0),
-                activeColor: AppColors.primary,
-                color: Colors.black26,
-                spacing: const EdgeInsets.symmetric(horizontal: 3.0),
-                activeShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (controller.onboarding != 2) {
+                        onboardKey.currentState?.animateScroll(
+                          controller.onboarding + 1,
+                        );
+                      } else {
+                        controller.endBoarding();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 8,
+                      shadowColor: AppColors.primary.withOpacity(0.4),
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      controller.onboarding != 2 ? "التالي" : "إبدأ الآن",
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -151,37 +138,42 @@ class OnboardingScreen extends StatelessWidget {
     String title,
     String description,
     String imagePath,
-    bool isSvg,
   ) {
     return PageViewModel(
-      titleWidget: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 21,
-          fontFamily: 'Adelle',
-          color: AppColors.primary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      bodyWidget: Container(
-        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      titleWidget: Padding(
+        padding: const EdgeInsets.only(top: 20.0),
         child: Text(
-          description,
-          textAlign: TextAlign.center,
+          title,
           style: const TextStyle(
-            fontSize: 15,
-            fontFamily: 'Adelle',
-            color: Color(0xff333333),
+            fontSize: 28,
+            fontFamily: 'Cairo',
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      image: Container(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        child: isSvg
-            ? SvgPicture.asset(imagePath, fit: BoxFit.contain)
-            : Image.asset(imagePath),
+      bodyWidget: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24),
+        child: Text(
+          description,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            fontFamily: 'Cairo',
+            height: 1.5,
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
-      decoration: const PageDecoration(pageColor: Colors.transparent),
+      image: Center(
+        child: SvgPicture.asset(imagePath, fit: BoxFit.contain, width: 280),
+      ),
+      decoration: const PageDecoration(
+        pageColor: Colors.transparent,
+        imagePadding: EdgeInsets.zero,
+        contentMargin: EdgeInsets.symmetric(horizontal: 16),
+      ),
     );
   }
 }
