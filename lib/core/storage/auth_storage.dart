@@ -2,7 +2,6 @@ import 'package:get_storage/get_storage.dart';
 
 class AuthStorage {
   static const String _tokenKey = 'auth_token';
-  static const String _userDataKey = 'user_data';
 
   final GetStorage _storage = GetStorage();
 

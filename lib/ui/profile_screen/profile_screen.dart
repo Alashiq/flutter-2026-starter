@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:starter/core/utils/app_actions.dart';
 import 'package:starter/features/auth/auth_controller.dart';
+import 'package:starter/shared/layout/main_layout_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -11,128 +12,131 @@ class ProfileScreen extends StatelessWidget {
     final authController = Get.find<AuthController>();
     final user = authController.user.value;
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('الملف الشخصي'), centerTitle: true),
-      body: user == null
-          ? const Center(child: Text('لا توجد بيانات مستخدم'))
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // صورة المستخدم
-                  Center(
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundImage: user.photo != null
-                          ? NetworkImage(user.photo!)
-                          : null,
-                      child: user.photo == null
-                          ? const Icon(Icons.person, size: 60)
-                          : null,
+    return MainLayoutWidget(
+      title: "Profile Screen",
+      activePageId: 4,
+      child: Expanded(
+        child: user == null
+            ? const Center(child: Text('لا توجد بيانات مستخدم'))
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // صورة المستخدم
+                    Center(
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundImage: user.photo != null
+                            ? NetworkImage(user.photo!)
+                            : null,
+                        child: user.photo == null
+                            ? const Icon(Icons.person, size: 60)
+                            : null,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // بطاقة المعلومات الشخصية
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'المعلومات الشخصية',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                    // بطاقة المعلومات الشخصية
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'المعلومات الشخصية',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const Divider(height: 24),
-                          _buildInfoRow(
-                            icon: Icons.person,
-                            label: 'الاسم الأول',
-                            value: user.firstName ?? 'غير محدد',
-                          ),
-                          const SizedBox(height: 12),
-                          _buildInfoRow(
-                            icon: Icons.person_outline,
-                            label: 'اسم العائلة',
-                            value: user.lastName ?? 'غير محدد',
-                          ),
-                          const SizedBox(height: 12),
-                          _buildInfoRow(
-                            icon: Icons.phone,
-                            label: 'رقم الهاتف',
-                            value: user.phone ?? 'غير محدد',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // بطاقة الإحصائيات
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'الإحصائيات',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                            const Divider(height: 24),
+                            _buildInfoRow(
+                              icon: Icons.person,
+                              label: 'الاسم الأول',
+                              value: user.firstName ?? 'غير محدد',
                             ),
-                          ),
-                          const Divider(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildStatCard(
-                                icon: Icons.stars,
-                                label: 'النقاط',
-                                value: user.point?.toString() ?? '0',
-                                color: Colors.amber,
-                              ),
-                              _buildStatCard(
-                                icon: Icons.account_balance_wallet,
-                                label: 'الرصيد',
-                                value: user.balance?.toString() ?? '0',
-                                color: Colors.green,
-                              ),
-                              _buildStatCard(
-                                icon: Icons.notifications,
-                                label: 'الإشعارات',
-                                value: user.notifications?.toString() ?? '0',
-                                color: Colors.blue,
-                              ),
-                            ],
-                          ),
-                        ],
+                            const SizedBox(height: 12),
+                            _buildInfoRow(
+                              icon: Icons.person_outline,
+                              label: 'اسم العائلة',
+                              value: user.lastName ?? 'غير محدد',
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInfoRow(
+                              icon: Icons.phone,
+                              label: 'رقم الهاتف',
+                              value: user.phone ?? 'غير محدد',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
-                  // زر تسجيل الخروج
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: AppActions.logout,
-                      icon: const Icon(Icons.logout),
-                      label: const Text('تسجيل الخروج'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
+                    // بطاقة الإحصائيات
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'الإحصائيات',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Divider(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _buildStatCard(
+                                  icon: Icons.stars,
+                                  label: 'النقاط',
+                                  value: user.point?.toString() ?? '0',
+                                  color: Colors.amber,
+                                ),
+                                _buildStatCard(
+                                  icon: Icons.account_balance_wallet,
+                                  label: 'الرصيد',
+                                  value: user.balance?.toString() ?? '0',
+                                  color: Colors.green,
+                                ),
+                                _buildStatCard(
+                                  icon: Icons.notifications,
+                                  label: 'الإشعارات',
+                                  value: user.notifications?.toString() ?? '0',
+                                  color: Colors.blue,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+
+                    // زر تسجيل الخروج
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: AppActions.logout,
+                        icon: const Icon(Icons.logout),
+                        label: const Text('تسجيل الخروج'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
