@@ -9,8 +9,8 @@ import 'package:starter/features/auth/auth_controller.dart';
 import 'package:starter/features/auth/models/city_user_model.dart';
 import 'package:starter/shared/validation/app_validators.dart';
 
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+class ChangeUserCityScreen extends StatelessWidget {
+  const ChangeUserCityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-class CitySignUpModel {
+class CityUserModel {
   final int id;
   final String name;
   final String? description;
@@ -8,7 +8,7 @@ class CitySignUpModel {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  CitySignUpModel({
+  CityUserModel({
     required this.id,
     required this.name,
     this.description,
@@ -19,8 +19,8 @@ class CitySignUpModel {
     this.updatedAt,
   });
 
-  factory CitySignUpModel.fromJson(Map<String, dynamic> json) {
-    return CitySignUpModel(
+  factory CityUserModel.fromJson(Map<String, dynamic> json) {
+    return CityUserModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? 'بدون اسم',
       description: json['description'],

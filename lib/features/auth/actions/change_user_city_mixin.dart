@@ -6,7 +6,7 @@ import 'package:starter/core/network/api_state.dart';
 import 'package:starter/features/auth/models/auth_model.dart';
 import 'package:starter/features/auth/models/city_user_model.dart';
 
-mixin SignUpMixin on GetxController {
+mixin ChangeUserCityMixin on GetxController {
   void setAuthData(AuthModel userData);
 
   final signUpState = Rx<ApiState<AuthModel>>(const ApiInit());

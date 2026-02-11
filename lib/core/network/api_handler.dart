@@ -7,6 +7,7 @@ import 'package:starter/core/network/api_state.dart';
 import 'package:starter/core/network/api_state_paginated.dart';
 import 'package:starter/core/widgets/dialog/alert_message.dart';
 import 'package:starter/core/network/models/pagination_meta.dart';
+import 'package:starter/core/utils/app_actions.dart';
 import 'package:starter/core/widgets/loading/loading.dart';
 
 class ApiHandler {
@@ -258,6 +259,7 @@ class ApiHandler {
     } else if (response.statusCode == 401) {
       if (!isLoadMore) {
         state.value = const ApiPaginatedUnauthorized();
+        AppActions.logout();
       }
       return false;
     } else if (response.statusCode == 403) {
@@ -311,6 +313,7 @@ class ApiHandler {
       state.value = const ApiEmpty();
     } else if (response.statusCode == 401) {
       state.value = const ApiUnauthorized();
+      AppActions.logout();
     } else if (response.statusCode == 403) {
       state.value = const ApiNoPermission();
     } else if (response.statusCode == 404) {
@@ -384,6 +387,7 @@ class ApiHandler {
         }
       } else if (response.statusCode == 401) {
         state.value = const ApiUnauthorized();
+        AppActions.logout();
         showAlertMessage(
           'انتهت الجلسة، يرجى تسجيل الدخول',
           type: AlertType.unauthorized,
